@@ -31,9 +31,7 @@ export const firebaseApply = async (
     ...(user ? { recruitedBy: extractUserPublicSnippet(user) } : {})
   });
 };
-console.log(":)");
 const root = document.getElementById("streetcampaign-apply-widget");
-console.log(root);
 const companyId = root?.dataset?.companyId;
 
 ReactDOM.render(
