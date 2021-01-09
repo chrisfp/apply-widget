@@ -1,6 +1,6 @@
 {
   "extends": ["react-app"],
-  "ignorePatterns": ["dist/bundle.min.js"],
+  "ignorePatterns": ["dist/apply-widget.min.js"],
   "plugins": ["simple-import-sort"],
   "rules": {
     "react-hooks/rules-of-hooks": "error",

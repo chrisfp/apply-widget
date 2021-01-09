@@ -9,7 +9,7 @@ module.exports = {
       .map(f => path.resolve(__dirname, f))
   },
   output: {
-    filename: "bundle.min.js"
+    filename: "apply-widget.min.js"
   },
   module: {
     rules: [
