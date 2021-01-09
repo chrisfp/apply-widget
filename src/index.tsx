@@ -17,6 +17,8 @@ export const firebaseConfig =
     process.env.REACT_APP_GCLOUD_PROJECT as keyof typeof firebaseConfigs
   ];
 
+console.log("test");
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
