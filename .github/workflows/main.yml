@@ -60,7 +60,7 @@ jobs:
 
       - name: Add build to git
         run: |
-          git add dist/widget.min.js
+          git add dist/bundle.min.js
 
       - name: "Automated Version Bump"
         uses: "phips28/gh-action-bump-version@master"
