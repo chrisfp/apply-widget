@@ -1,0 +1,10 @@
+{
+  "extends": ["react-app"],
+  "ignorePatterns": ["dist/widget.min.js"],
+  "plugins": ["simple-import-sort"],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "simple-import-sort/sort": "warn"
+  }
+}

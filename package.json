@@ -1,0 +1,90 @@
+{
+  "name": "streetcampaign-apply-widget",
+  "version": "0.0.0",
+  "private": true,
+  "homepage": ".",
+  "engines": {
+    "node": "10"
+  },
+  "dependencies": {
+    "@babel/core": "^7.0.0",
+    "@date-io/date-fns": "^1.3.11",
+    "@material-ui/core": "^4.9.12",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.50",
+    "@material-ui/pickers": "^3.2.10",
+    "@types/react": "^16.9.34",
+    "@types/react-avatar-editor": "^10.3.5",
+    "@types/react-dom": "16.9.3",
+    "@types/react-redux": "^7.1.5",
+    "@types/react-router-redux": "^5.0.18",
+    "@types/yup": "^0.29.11",
+    "clsx": "^1.0.4",
+    "date-fns": "^2.8.1",
+    "date-fns-tz": "^1.0.10",
+    "eslint-plugin-react-hooks": "^3.0.0",
+    "firebase": "^7.15.5",
+    "formik": "^2.2.5",
+    "formik-material-ui": "^2.0.0-beta.1",
+    "lint-staged": "^9.4.2",
+    "react": "^16.11.0",
+    "react-dom": "^17.0.1",
+    "react-scripts": "^3.3.0",
+    "reinspect": "^1.0.2",
+    "styled-components": "^5.0.1",
+    "typescript": "^3.7",
+    "yup": "^0.32.8"
+  },
+  "scripts": {
+    "prestart": "echo $(firebase use)",
+    "start": "REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') REACT_APP_GCLOUD_PROJECT=$(firebase use) react-scripts start",
+    "prebuild": "echo $(firebase use)",
+    "build": "REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') REACT_APP_GCLOUD_PROJECT=$(firebase use) react-scripts build",
+    "build:widget": "REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') REACT_APP_GCLOUD_PROJECT=$(firebase use) parcel build src/index.tsx --no-source-maps --experimental-scope-hoisting -d build",
+    "build:bundle": "REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') REACT_APP_GCLOUD_PROJECT=$(firebase use) react-scripts build && cat ./build/static/js/*.js > ./dist/widget.min.js",
+    "build:bundle:ci": "react-scripts build && cat ./build/static/js/*.js > ./dist/widget.min.js",
+    "build:ci": "react-scripts build",
+    "test": "REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') REACT_APP_GCLOUD_PROJECT=$(firebase use) react-scripts test",
+    "deploy:prod": "firebase use streetcampaign-prod && REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') yarn build && firebase deploy --except functions && firebase use streetcampaign-master",
+    "lint": "tsc && eslint --ext js,ts,tsx src ",
+    "release": "git checkout prod && git rebase origin/master && git push && git checkout master",
+    "lint:fix": "eslint --fix --ext js,ts,tsx src ",
+    "eject": "react-scripts eject",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public",
+    "prettier": "prettier --write \"src/**/*.+(js|md|ts|css|sass|less|json|tsx)\""
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{json,css,scss,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "eslint-plugin-simple-import-sort": "^5.0.2",
+    "husky": "^3.0.9",
+    "prettier": "^1.19.1",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack-cli": "^4.3.1"
+  }
+}

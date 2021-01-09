@@ -1,0 +1,65 @@
+export enum CaAdvertisedThroughType {
+  STUDENTJOB = "STUDENTJOB",
+  RECRUDO = "RECRUDO",
+  STEPSTONE = "STEPSTONE",
+  INDEED = "INDEED",
+  RECOMMENDATION = "RECOMMENDATION",
+  FACEBOOK = "FACEBOOK",
+  INSTAGRAM = "INSTAGRAM",
+  OTHER = "OTHER"
+}
+
+export enum CaBusinessUnitType {
+  UNKNOWN = "UNKNOWN",
+  DUS = "DUS",
+  BERLIN = "BERLIN",
+  TRAVEL = "TRAVEL"
+}
+
+export enum CaDenominationType {
+  AK = "AK",
+  EV = "EV",
+  FG = "FG",
+  FR = "FR",
+  IS = "IS",
+  JD = "JD",
+  LT = "LT",
+  RF = "RF",
+  RK = "RK",
+  UN = "UN",
+  VD = "VD"
+}
+
+export enum CaEmployeeOccupationType {
+  PUPIL = "PUPIL",
+  STUDENT = "STUDENT",
+  PUPIL_WILL_STUDY = "PUPIL_WILL_STUDY",
+  PUPIL_WONT_STUDY = "PUPIL_WONT_STUDY",
+  POST_GRAD = "POST_GRAD",
+  TRAINEE = "TRAINEE",
+  EMPLOYED = "EMPLOYED",
+  SELF_EMPLOYED = "SELF_EMPLOYED",
+  UNEMPLOYED_PAID = "UNEMPLOYED_PAID",
+  UNEMPLOYED_NOT_PAID = "UNEMPLOYED_NOT_PAID",
+  VOLUNTARY_SERVICE = "VOLUNTARY_SERVICE"
+}
+
+export enum CaPreviousEmploymentType {
+  FULL_TIME = "FULL_TIME",
+  PART_TIME = "PART_TIME",
+  SHORT_TERM = "SHORT_TERM",
+  MAX_450 = "MAX_450",
+  MAX_850 = "MAX_850"
+}
+
+export enum CaOnboardingState {
+  NEW = "NEW",
+  CALL = "CALL",
+  INTERVIEW = "INTERVIEW",
+  APPROVED = "APPROVED",
+  OUT_TOO_YOUNG = "OUT_TOO_YOUNG",
+  OUT_INTERVIEW_MISSED = "OUT_INTERVIEW_MISSED",
+  OUT_REFUSED = "OUT_REFUSED",
+  OUT_DECLINED = "OUT_DECLINED",
+  OUT_NO_RESPONSE = "OUT_NO_RESPONSE"
+}

@@ -1,0 +1,98 @@
+name: Release
+on:
+  push:
+    branches:    
+      - main
+jobs:
+  version-bump:
+    name: Build & Version Bump
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+    steps:
+      - name: "Checkout source code"
+        uses: "actions/checkout@v2"
+
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@master
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      
+      - name: Set env variables
+        id: env
+        run: | 
+          echo "REACT_APP_TIMESTAMP=$(date -u --rfc-3339=seconds | sed 's/ /T/')" >> $GITHUB_ENV
+          echo "REACT_APP_GITHUB_SHA=${{ github.sha }}" >> $GITHUB_ENV
+          echo "REACT_APP_VERSION=${{ steps.package-version.outputs.current-version }}" >> $GITHUB_ENV
+          echo "REACT_APP_GCLOUD_PROJECT=streetcampaign-prod" >> $GITHUB_ENV
+          echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
+
+      - name: Set up node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "${{ steps.env.outputs.NVMRC }}"
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build
+        run: |
+          yarn build:bundle:ci
+        env:
+          REACT_APP_GCLOUD_PROJECT: streetcampaign-prod
+
+      - name: Add build to git
+        run: |
+          git add dist/widget.min.js
+
+      - name: "Automated Version Bump"
+        uses: "phips28/gh-action-bump-version@master"
+        with:
+          tag-prefix: ""
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: "Publish"
+    needs: version-bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Get Previous tag
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@master"
+
+      - name: Get version
+        id: version
+        run: echo "::set-output name=version::$(echo "${{ steps.previoustag.outputs.tag }}" | cut -c2-15)"
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: ${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
