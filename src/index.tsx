@@ -31,8 +31,8 @@ export const firebaseApply = async (
     ...(user ? { recruitedBy: extractUserPublicSnippet(user) } : {})
   });
 };
-const root = document.getElementById("streetcampaign-apply-widget");
-const companyId = root?.dataset?.companyId;
+const rootEl = document.getElementById("streetcampaign-apply-widget");
+const companyId = rootEl?.dataset?.companyId;
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>
