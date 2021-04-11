@@ -105,6 +105,12 @@ const useStyles = makeStyles(theme => ({
   fullWidth: {
     width: "100%"
   },
+  fixBorders: {
+    "& .MuiInputBase-root input": {
+      border: 0
+    }
+  },
+
   errorlabel: {
     marginBottom: theme.spacing(2)
   }
@@ -207,7 +213,7 @@ export const ApplyForm = ({
       >
         {({ submitForm, isSubmitting, resetForm }) =>
           !applied ? (
-            <Form>
+            <Form className={classes.fixBorders}>
               <input name="city" style={{ opacity: 0, position: "absolute" }} />
               {recruitingMode && (
                 <>
