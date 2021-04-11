@@ -1,5 +1,4 @@
 import "firebase/functions";
-import "./cleanslate.css";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/styles";

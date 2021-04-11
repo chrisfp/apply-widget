@@ -105,6 +105,14 @@ const useStyles = makeStyles(theme => ({
   fullWidth: {
     width: "100%"
   },
+  checkboxTop: {
+    "& .MuiFormControlLabel-root": {
+      alignItems: "start"
+    },
+    "& .MuiCheckbox-root": {
+      marginTop: -theme.spacing(1)
+    }
+  },
   fixBorders: {
     "& .MuiInputBase-root input": {
       border: 0
@@ -337,7 +345,7 @@ export const ApplyForm = ({
 
                 {!noLegal && (
                   <>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} className={classes.checkboxTop}>
                       <Field
                         color="primary"
                         name="disclaimerConfirmed"

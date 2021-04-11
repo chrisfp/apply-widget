@@ -13,7 +13,7 @@ export interface AppProps {
 export function App({ companyId }: AppProps) {
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils} locale={deLocale}>
-      <Box p={2} style={{ backgroundColor: "#fff" }} className="cleanslate">
+      <Box p={2} style={{ backgroundColor: "#fff" }}>
         <ApplyForm companyId={companyId} />
       </Box>
     </MuiPickersUtilsProvider>
