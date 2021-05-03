@@ -59,21 +59,16 @@ export interface CaUser extends CaUserId, StoreItem, StoreItemTimestamped {
   firstName: string;
   lastName: string;
   email: string;
-  companyId: string;
+  est?: number | null;
   phoneNumber: string;
   displayName: string;
-  organizationId?: string;
   birthName?: string;
-  disabled?: boolean;
-  emailVerified?: boolean;
   origPhotoURL?: string;
   photoURL?: string;
-  dateOfBirth?: firebase.firestore.Timestamp;
+  dateOfBirth: firebase.firestore.Timestamp;
   businessUnit?: CaBusinessUnitType;
-  fundraiserNumber: number;
   city?: string;
   state: string;
-  recruitedBy?: CaUserPublicSnippet;
   street?: string;
   number?: string;
   postalCode?: string;
@@ -92,19 +87,20 @@ export interface CaUser extends CaUserId, StoreItem, StoreItemTimestamped {
   socialSecurityNumber?: string;
   denomination?: CaDenominationType;
   driversLicense?: boolean;
-  driversLicenseFrontPhotoURL?: string;
-  driversLicenseBackPhotoURL?: string;
+  driversLicenseFrontPhotoURL?: string | firebase.firestore.FieldValue;
+  driversLicenseBackPhotoURL?: string | firebase.firestore.FieldValue;
   availableAsDriver?: boolean;
   driversLicenseDateIssued?: firebase.firestore.Timestamp;
-  nextAvailability?: firebase.firestore.Timestamp;
+  nextAvailability?: firebase.firestore.Timestamp | null;
   nextAvailabilityComment?: string;
   advertisedThrough?: CaAdvertisedThroughType;
   onboardingState?: CaOnboardingState;
-  pointsGross?: number;
-  pointsLifetimeNet?: number;
-  pointsLifetimeGross?: number;
-  pointsYearNet?: { [year: string]: number };
-  pointsYearGross?: { [year: string]: number };
+  recommendationClaim?: string;
+  companyId: string;
+  organizationId?: string;
+  disabled?: boolean;
+  emailVerified?: boolean;
+  fundraiserNumber: number;
 }
 export const extractUserPublicSnippet = (
   user: Pick<

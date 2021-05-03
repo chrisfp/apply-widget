@@ -24,10 +24,7 @@ import { CaUser } from "../types/model";
 import { enumKeys } from "../utils/helpers";
 import { FormikKeyboardDatePicker } from "./FormikKeyboardDatePicker";
 
-export const validationSchema = (
-  recruitingMode: boolean,
-  noLegal: boolean = false
-) => () =>
+export const validationSchema = (noLegal: boolean = false) => () =>
   yup.object().shape({
     firstName: yup
       .string()
@@ -42,20 +39,20 @@ export const validationSchema = (
       .trim()
       .email("Ungültige Email Adresse")
       .required("Pflichtfeld"),
-    ...(!recruitingMode
-      ? {
-          advertisedThrough: yup
-            .string()
-            .trim()
-            .required("Pflichtfeld")
-        }
-      : {}),
+
+    advertisedThrough: yup
+      .string()
+      .trim()
+      .required("Pflichtfeld"),
+    recommendationClaim: yup.string().when("advertisedThrough", {
+      is: CaAdvertisedThroughType.RECOMMENDATION,
+      then: yup.string().required("Name und/oder Fundraisernummer erforderlich")
+    }),
     phoneNumber: yup
       .string()
       .trim()
-      // .matches(phoneRegExp, "Ungültige Handynummer")
       .required("Pflichtfeld"),
-    // ...(noLegal ? [] : []),
+
     ...(noLegal
       ? {}
       : {
@@ -79,8 +76,8 @@ export const validationSchema = (
       .trim()
       .required("Pflichtfeld"),
     dateOfBirth: yup
-      .string()
-      .trim()
+      .object()
+      .nullable()
       .required("Pflichtfeld")
   });
 
@@ -129,10 +126,11 @@ export interface ApplyFormValues {
   advertisedThrough: string;
   lastName: string;
   email: string;
+  recommendationClaim: string;
   phoneNumber: string;
   disclaimerConfirmed: boolean;
   contactConfirmed: boolean;
-  dateOfBirth?: firebase.firestore.Timestamp;
+  dateOfBirth?: firebase.firestore.Timestamp | null;
   city: string;
   companyId: string;
 }
@@ -142,7 +140,6 @@ interface ApplyFormFormikProps {
   noLegal?: boolean;
   submitText?: string;
   companyId: string;
-  noRecruiting?: boolean;
   onSubmit?: (values: ApplyFormValues) => void;
 }
 
@@ -150,14 +147,15 @@ export const ApplyForm = ({
   user,
   noLegal,
   companyId,
-  noRecruiting = false,
   submitText = "Jetzt Bewerben!",
   onSubmit
 }: ApplyFormFormikProps) => {
   const [initialValues] = useState<ApplyFormValues>({
     firstName: "",
     advertisedThrough: "",
+    recommendationClaim: "",
     city: "",
+    dateOfBirth: null,
     lastName: "",
     email: "",
     phoneNumber: "",
@@ -177,7 +175,7 @@ export const ApplyForm = ({
       <Formik
         innerRef={formikRef as any}
         initialValues={initialValues}
-        validationSchema={validationSchema(recruitingMode, noLegal)}
+        validationSchema={validationSchema(noLegal)}
         onSubmit={async (values, { setFieldError, setFieldValue }) => {
           const phoneNumberStripped = `${values.phoneNumber}`.replace(
             /^\s+|\s+$/g,
@@ -219,7 +217,7 @@ export const ApplyForm = ({
           return;
         }}
       >
-        {({ submitForm, isSubmitting, resetForm }) =>
+        {({ submitForm, isSubmitting, resetForm, values }) =>
           !applied ? (
             <Form className={classes.fixBorders}>
               <input name="city" style={{ opacity: 0, position: "absolute" }} />
@@ -252,7 +250,6 @@ export const ApplyForm = ({
                     type="text"
                     label="Vorname"
                     inputRef={nameField}
-                    required
                     component={TextField}
                   />
                 </Grid>
@@ -263,7 +260,6 @@ export const ApplyForm = ({
                     name="lastName"
                     type="text"
                     label="Nachname"
-                    required
                     component={TextField}
                   />
                 </Grid>
@@ -274,7 +270,6 @@ export const ApplyForm = ({
                     name="city"
                     type="text"
                     label="Wohnort"
-                    required
                     autoComplete="no"
                     component={TextField}
                   />
@@ -291,46 +286,19 @@ export const ApplyForm = ({
                     invalidDateMessage="Ungültiges Datum"
                     label="Geburtsdatum"
                     autoComplete="no"
-                    required
                     component={FormikKeyboardDatePicker}
                   />
                 </Grid>
-                <Grid item xs={12} md={12}>
+                <Grid item xs={12} md={6}>
                   <Field
                     fullWidth
                     variant="outlined"
                     name="email"
                     type="text"
                     label="Email"
-                    required
                     component={TextField}
                   />
                 </Grid>
-                {!recruitingMode && (
-                  <Grid item xs={12} md={6}>
-                    <Field
-                      fullWidth
-                      variant="outlined"
-                      name="advertisedThrough"
-                      type="text"
-                      label="Aufmerksam geworden"
-                      select
-                      required
-                      component={TextField}
-                    >
-                      {enumKeys(CaAdvertisedThroughType).map(key => (
-                        <MenuItem
-                          key={key}
-                          value={CaAdvertisedThroughType[key]}
-                        >
-                          <AdvertisedThrough>
-                            {CaAdvertisedThroughType[key]}
-                          </AdvertisedThrough>
-                        </MenuItem>
-                      ))}
-                    </Field>
-                  </Grid>
-                )}
                 <Grid item xs={12} md={6}>
                   <Field
                     fullWidth
@@ -338,9 +306,40 @@ export const ApplyForm = ({
                     name="phoneNumber"
                     type="text"
                     label="Handy"
-                    required
                     component={TextField}
                   />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Field
+                    fullWidth
+                    variant="outlined"
+                    name="advertisedThrough"
+                    type="text"
+                    label="Aufmerksam geworden"
+                    select
+                    component={TextField}
+                  >
+                    {enumKeys(CaAdvertisedThroughType).map(key => (
+                      <MenuItem key={key} value={CaAdvertisedThroughType[key]}>
+                        <AdvertisedThrough>
+                          {CaAdvertisedThroughType[key]}
+                        </AdvertisedThrough>
+                      </MenuItem>
+                    ))}
+                  </Field>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  {values.advertisedThrough ===
+                    CaAdvertisedThroughType.RECOMMENDATION && (
+                    <Field
+                      fullWidth
+                      variant="outlined"
+                      name="recommendationClaim"
+                      type="text"
+                      label="Wer hat dich empfohlen?"
+                      component={TextField}
+                    />
+                  )}
                 </Grid>
 
                 {!noLegal && (
@@ -350,7 +349,6 @@ export const ApplyForm = ({
                         color="primary"
                         name="disclaimerConfirmed"
                         component={FormControlCheckbox}
-                        required
                         label={
                           <Typography variant="body2" color="textSecondary">
                             Ich bin damit einverstanden, dass die Bearbeitung
@@ -369,7 +367,6 @@ export const ApplyForm = ({
                         color="primary"
                         name="contactConfirmed"
                         component={FormControlCheckbox}
-                        required
                         label={
                           <Typography variant="body2" color="textSecondary">
                             Apollon darf mich telefonisch und per Email
