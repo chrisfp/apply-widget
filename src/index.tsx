@@ -21,7 +21,9 @@ export const firebaseConfig =
 firebase.initializeApp(firebaseConfig);
 
 export const firebaseApply = async (
-  applyData: ApplyFormValues,
+  applyData: Omit<ApplyFormValues, "dateOfBirth"> & {
+    dateOfBirth: firebase.firestore.Timestamp;
+  },
   user?: CaUser
 ) => {
   const functions = firebase.app().functions(`${process.env.REACT_APP_REGION}`);

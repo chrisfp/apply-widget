@@ -1,3 +1,5 @@
+import "firebase/firestore";
+
 import {
   Box,
   Button,
@@ -10,19 +12,26 @@ import {
 } from "@material-ui/core";
 import { DraftsTwoTone } from "@material-ui/icons";
 import { addYears } from "date-fns";
+import firebase from "firebase/app";
 import { Field, Form, Formik, FormikProps } from "formik";
 import { TextField } from "formik-material-ui";
+import { KeyboardDatePicker } from "formik-material-ui-pickers";
 import React, { useRef, useState } from "react";
 import * as yup from "yup";
 
 import { AdvertisedThrough } from "../atoms/AdvertisedThrough";
+import { FormattedTextField } from "../atoms/FormattedTextField";
 import { FormControlCheckbox } from "../atoms/FormControlCheckbox";
 import { SubmitButton } from "../atoms/SubmitButton";
+import {
+  formatCapitalizeFirst,
+  formatLowerCaseTrim,
+  formatPhoneNumberCountryCode
+} from "../formatters";
 import { firebaseApply } from "../index";
 import { CaAdvertisedThroughType } from "../types/enums";
 import { CaUser } from "../types/model";
 import { enumKeys } from "../utils/helpers";
-import { FormikKeyboardDatePicker } from "./FormikKeyboardDatePicker";
 
 export const validationSchema = (noLegal: boolean = false) => () =>
   yup.object().shape({
@@ -39,7 +48,6 @@ export const validationSchema = (noLegal: boolean = false) => () =>
       .trim()
       .email("Ungültige Email Adresse")
       .required("Pflichtfeld"),
-
     advertisedThrough: yup
       .string()
       .trim()
@@ -76,7 +84,7 @@ export const validationSchema = (noLegal: boolean = false) => () =>
       .trim()
       .required("Pflichtfeld"),
     dateOfBirth: yup
-      .object()
+      .date()
       .nullable()
       .required("Pflichtfeld")
   });
@@ -131,8 +139,8 @@ export interface ApplyFormValues {
   phoneNumber: string;
   disclaimerConfirmed: boolean;
   contactConfirmed: boolean;
-  dateOfBirth?: firebase.firestore.Timestamp | null;
   city: string;
+  dateOfBirth: Date | null;
   companyId: string;
 }
 
@@ -196,8 +204,16 @@ export const ApplyForm = ({
             );
             values.advertisedThrough = CaAdvertisedThroughType.RECOMMENDATION;
           }
+          if (!values.dateOfBirth) {
+            throw new Error("dateOfBirth missing");
+          }
           try {
-            await firebaseApply(values);
+            await firebaseApply({
+              ...values,
+              dateOfBirth: firebase.firestore.Timestamp.fromDate(
+                values.dateOfBirth
+              )
+            });
             onSubmit?.(values);
             setApplied(true);
           } catch (error) {
@@ -246,39 +262,42 @@ export const ApplyForm = ({
                 <Grid item xs={12} sm={6}>
                   <Field
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     name="firstName"
                     type="text"
                     label="Vorname"
                     inputRef={nameField}
-                    component={TextField}
+                    onFormat={formatCapitalizeFirst}
+                    component={FormattedTextField}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Field
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     name="lastName"
                     type="text"
                     label="Nachname"
-                    component={TextField}
+                    onFormat={formatCapitalizeFirst}
+                    component={FormattedTextField}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Field
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     name="city"
                     type="text"
                     label="Wohnort"
                     autoComplete="no"
-                    component={TextField}
+                    onFormat={formatCapitalizeFirst}
+                    component={FormattedTextField}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Field
                     fullWidth
-                    inputVariant="outlined"
+                    inputVariant="filled"
                     name="dateOfBirth"
                     openTo="year"
                     views={["year", "month", "date"]}
@@ -287,33 +306,36 @@ export const ApplyForm = ({
                     invalidDateMessage="Ungültiges Datum"
                     label="Geburtsdatum"
                     autoComplete="no"
-                    component={FormikKeyboardDatePicker}
+                    format="dd.MM.yyyy"
+                    component={KeyboardDatePicker}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Field
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     name="email"
                     type="text"
                     label="Email"
-                    component={TextField}
+                    onFormat={formatLowerCaseTrim}
+                    component={FormattedTextField}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Field
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     name="phoneNumber"
                     type="text"
                     label="Handy"
-                    component={TextField}
+                    onFormat={formatPhoneNumberCountryCode}
+                    component={FormattedTextField}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Field
                     fullWidth
-                    variant="outlined"
+                    variant="filled"
                     name="advertisedThrough"
                     type="text"
                     label="Aufmerksam geworden"
@@ -334,7 +356,7 @@ export const ApplyForm = ({
                     CaAdvertisedThroughType.RECOMMENDATION && (
                     <Field
                       fullWidth
-                      variant="outlined"
+                      variant="filled"
                       name="recommendationClaim"
                       type="text"
                       label="Wer hat dich empfohlen?"
