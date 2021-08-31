@@ -1,3 +1,5 @@
+import "fontsource-roboto";
+
 import DateFnsUtils from "@date-io/date-fns";
 import { Box, ThemeProvider } from "@material-ui/core";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";

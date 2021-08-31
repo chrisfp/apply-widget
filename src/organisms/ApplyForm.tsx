@@ -119,9 +119,16 @@ const useStyles = makeStyles(theme => ({
     }
   },
   fixBorders: {
-    "& .MuiInputBase-root input": {
-      border: 0,
-      color: `${theme.palette.text.primary} ! important`
+    "& input": {
+      color: `${theme.palette.text.primary} !important`,
+      backgroundColor: `transparent !important`,
+      border: `none !important`,
+      fontSize: 14,
+      height: 56,
+      paddingBottom: 10,
+      paddingLeft: 12,
+      paddingRight: 12,
+      paddingTop: 27
     }
   },
 
