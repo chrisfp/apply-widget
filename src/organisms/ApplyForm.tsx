@@ -16,6 +16,7 @@ import firebase from "firebase/app";
 import { Field, Form, Formik, FormikProps } from "formik";
 import { TextField } from "formik-material-ui";
 import { KeyboardDatePicker } from "formik-material-ui-pickers";
+import parsePhoneNumberFromString from "libphonenumber-js";
 import React, { useRef, useState } from "react";
 import * as yup from "yup";
 
@@ -59,7 +60,23 @@ export const validationSchema = (noLegal: boolean = false) => () =>
     phoneNumber: yup
       .string()
       .trim()
-      .required("Pflichtfeld"),
+      .min(4)
+      .required()
+      .test({
+        name: "validNumber",
+        test: function(phoneNumber?: string) {
+          if (
+            !phoneNumber ||
+            parsePhoneNumberFromString(phoneNumber)?.isValid() !== true
+          ) {
+            return this.createError({
+              message: `Ungültige Telefonnummer`,
+              path: "phoneNumber" // Fieldname
+            });
+          }
+          return true;
+        }
+      }),
 
     ...(noLegal
       ? {}

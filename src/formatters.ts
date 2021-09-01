@@ -1,3 +1,5 @@
+import { AsYouType } from "libphonenumber-js";
+
 export const formatCapitalizeFirst = (sRaw: string) => {
   const s = sRaw;
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -40,21 +42,24 @@ export const formatStreetNumber = (s: string) =>
 
 export const formatWeekNumber = (s: string) => s.replace(/[^0-9 ]/g, "");
 
-export const formatPhoneNumber = (s: string) => s.replace(/[^0-9]/g, "");
-
 export const formatPostalCode = (s: string) =>
   s.toUpperCase().replace(/\s/g, "");
 
 export const formatPhoneNumberCountryCode = (sRaw: string) => {
-  const s = sRaw;
+  const s = sRaw.trim();
+  if (!s) {
+    return "";
+  }
   if (s.startsWith("+")) {
-    return `+${s.slice(1).replace(/[^0-9]/g, "")}`;
+    return new AsYouType("DE").input(`+${s.slice(1).replace(/[^0-9 ]/g, "")}`);
   }
   if (s.startsWith("00") && s.length > 4) {
-    return `+${s.slice(2).replace(/[^0-9]/g, "")}`;
+    return new AsYouType("DE").input(`+${s.slice(2).replace(/[^0-9 ]/g, "")}`);
   }
   if (s.startsWith("0") && !s.startsWith("00") && s.length > 1) {
-    return `+49${s.slice(1).replace(/[^0-9]/g, "")}`;
+    return new AsYouType("DE").input(
+      `+49${s.slice(1).replace(/[^0-9 ]/g, "")}`
+    );
   }
-  return s.replace(/[^0-9]/g, "");
+  return new AsYouType("DE").input(s.replace(/[^0-9 ]/g, ""));
 };
