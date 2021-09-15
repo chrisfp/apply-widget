@@ -48,7 +48,6 @@
     "build:bundle:ci": "react-scripts build && cat ./build/static/js/*.js > ./dist/apply-widget.min.js",
     "build:ci": "react-scripts build",
     "test": "REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') REACT_APP_GCLOUD_PROJECT=$(firebase use) react-scripts test",
-    "deploy:prod": "firebase use streetcampaign-prod && REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') yarn build && firebase deploy --except functions && firebase use streetcampaign-master",
     "lint": "tsc && eslint --ext js,ts,tsx src ",
     "release": "git checkout prod && git rebase origin/master && git push && git checkout master",
     "lint:fix": "eslint --fix --ext js,ts,tsx src ",
