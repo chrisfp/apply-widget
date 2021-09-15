@@ -1,20 +1,18 @@
 export const firebaseConfigs = {
-  "streetcampaign-prod": {
-    apiKey: "AIzaSyBk-ZNcwB_8qnToWOe7GEGPedUIGJoewu0",
-    authDomain: "streetcampaign-prod.firebaseapp.com",
-    databaseURL: "https://streetcampaign-prod.firebaseio.com",
-    projectId: "streetcampaign-prod",
-    storageBucket: "streetcampaign-prod.appspot.com",
-    messagingSenderId: "546121726438",
-    appId: "streetcampaign-prod"
+  "signature-production": {
+    apiKey: "***REMOVED***",
+    authDomain: "signature-production.firebaseapp.com",
+    projectId: "signature-production",
+    storageBucket: "signature-production.appspot.com",
+    messagingSenderId: "898805231263",
+    appId: "1:898805231263:web:8a4274b7abfb31d089bcaa"
   },
-  "streetcampaign-master": {
-    apiKey: "AIzaSyCWyjKEx9Ca7j0h6q1gE8p79_9ChPi50u8",
-    authDomain: "streetcampaign-master.firebaseapp.com",
-    databaseURL: "https://streetcampaign-master.firebaseio.com",
-    projectId: "streetcampaign-master",
-    storageBucket: "streetcampaign-master.appspot.com",
-    messagingSenderId: "86514773148",
-    appId: "streetcampaign-master"
+  "signature-main": {
+    apiKey: "***REMOVED***",
+    authDomain: "signature-main.firebaseapp.com",
+    projectId: "signature-main",
+    storageBucket: "signature-main.appspot.com",
+    messagingSenderId: "498298577987",
+    appId: "1:498298577987:web:361ec305cdbaa621af20f6"
   }
 };
