@@ -11,14 +11,15 @@ import { theme } from "./theme/theme";
 
 export interface AppProps {
   companyId: string;
+  businessUnits?: string;
 }
 
-export function App({ companyId }: AppProps) {
+export function App({ companyId, businessUnits }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
       <MuiPickersUtilsProvider utils={DateFnsUtils} locale={deLocale}>
         <Box p={2} style={{ backgroundColor: "#fff" }}>
-          <ApplyForm companyId={companyId} />
+          <ApplyForm companyId={companyId} businessUnits={businessUnits} />
         </Box>
       </MuiPickersUtilsProvider>
     </ThemeProvider>
