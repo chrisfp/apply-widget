@@ -3,6 +3,7 @@ import "firebase/firestore";
 import {
   Box,
   Button,
+  Chip,
   FormHelperText,
   Grid,
   Link,
@@ -21,6 +22,7 @@ import React, { useRef, useState } from "react";
 import * as yup from "yup";
 
 import { AdvertisedThrough } from "../atoms/AdvertisedThrough";
+import { BusinessUnit } from "../atoms/BusinessUnit";
 import { FormattedTextField } from "../atoms/FormattedTextField";
 import { FormControlCheckbox } from "../atoms/FormControlCheckbox";
 import { SubmitButton } from "../atoms/SubmitButton";
@@ -30,7 +32,7 @@ import {
   formatPhoneNumberCountryCode
 } from "../formatters";
 import { firebaseApply } from "../index";
-import { CaAdvertisedThroughType } from "../types/enums";
+import { CaAdvertisedThroughType, CaBusinessUnitType } from "../types/enums";
 import { CaUser } from "../types/model";
 import { enumKeys } from "../utils/helpers";
 
@@ -50,6 +52,10 @@ export const validationSchema = (noLegal: boolean = false) => () =>
       .email("Ungültige Email Adresse")
       .required("Pflichtfeld"),
     advertisedThrough: yup
+      .string()
+      .trim()
+      .required("Pflichtfeld"),
+    businessUnit: yup
       .string()
       .trim()
       .required("Pflichtfeld"),
@@ -128,8 +134,12 @@ const useStyles = makeStyles(theme => ({
     width: "100%"
   },
   checkboxTop: {
-    "& .MuiFormControlLabel-root": {
+    marginTop: theme.spacing(1),
+    "& label": {
       alignItems: "start"
+    },
+    "& label > span:first-child": {
+      marginTop: -10
     },
     "& .MuiCheckbox-root": {
       marginTop: -theme.spacing(1)
@@ -148,7 +158,17 @@ const useStyles = makeStyles(theme => ({
       paddingTop: 27
     }
   },
+  chips: {
+    marginTop: theme.spacing(3),
 
+    marginBottom: theme.spacing(3),
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    "& > *": {
+      margin: theme.spacing(0.5)
+    }
+  },
   errorlabel: {
     marginBottom: theme.spacing(2)
   }
@@ -160,6 +180,7 @@ export interface ApplyFormValues {
   lastName: string;
   email: string;
   recommendationClaim: string;
+  businessUnit: CaBusinessUnitType | "";
   phoneNumber: string;
   disclaimerConfirmed: boolean;
   contactConfirmed: boolean;
@@ -173,6 +194,7 @@ interface ApplyFormFormikProps {
   noLegal?: boolean;
   submitText?: string;
   companyId: string;
+  businessUnits?: string;
   onSubmit?: (values: ApplyFormValues) => void;
 }
 
@@ -180,6 +202,7 @@ export const ApplyForm = ({
   user,
   noLegal,
   companyId,
+  businessUnits,
   submitText = "Jetzt Bewerben!",
   onSubmit
 }: ApplyFormFormikProps) => {
@@ -191,6 +214,10 @@ export const ApplyForm = ({
     dateOfBirth: null,
     lastName: "",
     email: "",
+    businessUnit:
+      businessUnits?.length === 1
+        ? (businessUnits[0] as CaBusinessUnitType)
+        : "",
     phoneNumber: "",
     disclaimerConfirmed: false,
     contactConfirmed: false,
@@ -241,24 +268,35 @@ export const ApplyForm = ({
             onSubmit?.(values);
             setApplied(true);
           } catch (error) {
-            if (error.message === "Die Email Adresse ist bereits registriert") {
-              setFieldError("email", error.message);
-            } else if (error.message === "Ungültige Email Adresse") {
-              setFieldError("email", error.message);
-            } else if (
-              error.message === "Die Handynummer ist bereits registriert"
-            ) {
-              setFieldError("phoneNumber", error.message);
-            } else if (error.message === "Ungültige Handynummer") {
-              setFieldError("phoneNumber", error.message);
-            } else {
-              setErrorMessage(error.message);
+            if (error instanceof Error) {
+              if (
+                error.message === "Die Email Adresse ist bereits registriert"
+              ) {
+                setFieldError("email", error.message);
+              } else if (error.message === "Ungültige Email Adresse") {
+                setFieldError("email", error.message);
+              } else if (
+                error.message === "Die Handynummer ist bereits registriert"
+              ) {
+                setFieldError("phoneNumber", error.message);
+              } else if (error.message === "Ungültige Handynummer") {
+                setFieldError("phoneNumber", error.message);
+              } else {
+                setErrorMessage(error.message);
+              }
             }
           }
           return;
         }}
       >
-        {({ submitForm, isSubmitting, resetForm, values }) =>
+        {({
+          submitForm,
+          isSubmitting,
+          resetForm,
+          values,
+          setFieldValue,
+          errors
+        }) =>
           !applied ? (
             <Form className={classes.fixBorders}>
               <input name="city" style={{ opacity: 0, position: "absolute" }} />
@@ -388,6 +426,59 @@ export const ApplyForm = ({
                     />
                   )}
                 </Grid>
+                {businessUnits != null && businessUnits.length > 1 && (
+                  <>
+                    <Grid item xs={12}>
+                      <Typography
+                        style={{ marginTop: 16 }}
+                        variant="h6"
+                        component="p"
+                        align="center"
+                      >
+                        Mein gewünschter Einsatzort:
+                      </Typography>
+                      <div className={classes.chips}>
+                        {enumKeys(CaBusinessUnitType)
+                          .filter(
+                            key =>
+                              CaBusinessUnitType[key] !==
+                                CaBusinessUnitType.UNKNOWN &&
+                              businessUnits.includes(CaBusinessUnitType[key])
+                          )
+                          .map(key => (
+                            <Chip
+                              key={key}
+                              color={
+                                values.businessUnit === CaBusinessUnitType[key]
+                                  ? "primary"
+                                  : "default"
+                              }
+                              onClick={() =>
+                                setFieldValue(
+                                  "businessUnit",
+                                  CaBusinessUnitType[key]
+                                )
+                              }
+                              label={
+                                <BusinessUnit>
+                                  {CaBusinessUnitType[key]}
+                                </BusinessUnit>
+                              }
+                            ></Chip>
+                          ))}
+                      </div>
+                      {errors.businessUnit && (
+                        <FormHelperText
+                          error
+                          style={{ textAlign: "center" }}
+                          className={classes.errorlabel}
+                        >
+                          {errors.businessUnit}
+                        </FormHelperText>
+                      )}
+                    </Grid>
+                  </>
+                )}
 
                 {!noLegal && (
                   <>
@@ -400,10 +491,10 @@ export const ApplyForm = ({
                           <Typography variant="body2" color="textSecondary">
                             Ich bin damit einverstanden, dass die Bearbeitung
                             und Verwaltung meiner Bewerbungsdaten über den
-                            externen Dienstleister streetcampaign CP UG
+                            externen Dienstleister Signature CP UG
                             (haftungsbeschränkt) erfolgt. Die
-                            Datenschutzhinweise von streetcampaign findest du{" "}
-                            <Link href="https://streetcampaign.de/data-protection">
+                            Datenschutzhinweise von Signature findest du{" "}
+                            <Link href="https://signatureapp.de/privacy">
                               hier
                             </Link>
                             .

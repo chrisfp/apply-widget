@@ -12,10 +12,15 @@ import { ApplyFormValues } from "./organisms/ApplyForm";
 import { theme } from "./theme";
 import { CaUser, extractUserPublicSnippet } from "./types/model";
 
-export const firebaseConfig =
-  firebaseConfigs[
+const rootEl = document.getElementById("signature-apply-widget");
+const apiKey = rootEl?.dataset?.apiKey;
+
+export const firebaseConfig = {
+  ...firebaseConfigs[
     process.env.REACT_APP_GCLOUD_PROJECT as keyof typeof firebaseConfigs
-  ];
+  ],
+  apiKey
+};
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -33,20 +38,22 @@ export const firebaseApply = async (
     ...(user ? { recruitedBy: extractUserPublicSnippet(user) } : {})
   });
 };
-const rootEl = document.getElementById("streetcampaign-apply-widget");
+
 const companyId = rootEl?.dataset?.companyId;
+const businessUnits =
+  rootEl?.dataset?.businessUnits && JSON.parse(rootEl?.dataset?.businessUnits);
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>
     <CssBaseline />
     {companyId ? (
-      <App companyId={companyId} />
+      <App companyId={companyId} businessUnits={businessUnits} />
     ) : (
       <p>
-        Please pass a valid company to the #streetcampaign-apply-widget element
-        using the attribute data-company-id="..."
+        Please pass a valid company to the #signature-apply-widget element using
+        the attribute data-company-id="..."
       </p>
     )}
   </ThemeProvider>,
-  document.querySelector("#streetcampaign-apply-widget")
+  document.querySelector("#signature-apply-widget")
 );
