@@ -1,5 +1,3 @@
-import "firebase/firestore";
-
 import {
   Box,
   Button,
@@ -13,7 +11,7 @@ import {
 } from "@material-ui/core";
 import { DraftsTwoTone } from "@material-ui/icons";
 import { addYears } from "date-fns";
-import firebase from "firebase/app";
+import { Timestamp } from "firebase/firestore";
 import { Field, Form, Formik, FormikProps } from "formik";
 import { TextField } from "formik-material-ui";
 import { KeyboardDatePicker } from "formik-material-ui-pickers";
@@ -261,9 +259,7 @@ export const ApplyForm = ({
           try {
             await firebaseApply({
               ...values,
-              dateOfBirth: firebase.firestore.Timestamp.fromDate(
-                values.dateOfBirth
-              )
+              dateOfBirth: Timestamp.fromDate(values.dateOfBirth)
             });
             onSubmit?.(values);
             setApplied(true);

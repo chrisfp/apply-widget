@@ -1,8 +1,8 @@
-import "firebase/functions";
-
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/styles";
-import firebase from "firebase/app";
+import { initializeApp } from "firebase/app";
+import { Timestamp } from "firebase/firestore";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import React from "react";
 import ReactDOM from "react-dom";
 
@@ -23,19 +23,22 @@ export const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+export const firebaseApp = initializeApp(firebaseConfig);
 
+export const functions = getFunctions(
+  firebaseApp,
+  process.env.REACT_APP_REGION
+);
 export const firebaseApply = async (
   applyData: Omit<ApplyFormValues, "dateOfBirth"> & {
-    dateOfBirth: firebase.firestore.Timestamp;
+    dateOfBirth: Timestamp;
   },
   user?: CaUser
 ) => {
-  const functions = firebase.app().functions(`${process.env.REACT_APP_REGION}`);
-  const applyCallable = functions.httpsCallable("apply");
+  const applyCallable = httpsCallable(functions, "apply");
   return await applyCallable({
     ...applyData,
-    ...(user ? { recruitedBy: extractUserPublicSnippet(user) } : {})
+    ...(user ? { _recommendedBy: extractUserPublicSnippet(user) } : {})
   });
 };
 

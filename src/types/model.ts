@@ -1,3 +1,5 @@
+import { FieldValue, Timestamp } from "firebase/firestore";
+
 import { removeUndefinedFields } from "../utils/helpers";
 import {
   CaAdvertisedThroughType,
@@ -31,13 +33,13 @@ export enum CaUserGenderType {
 }
 
 export interface StoreItem {
-  readonly created: firebase.firestore.Timestamp & {
+  readonly created: Timestamp & {
     _seconds: number;
     _nanoseconds: number;
   };
 }
 export interface StoreItemTimestamped {
-  readonly lastUpdate: firebase.firestore.Timestamp & {
+  readonly lastUpdate: Timestamp & {
     _seconds: number;
     _nanoseconds: number;
   };
@@ -47,9 +49,9 @@ export interface CaUserId {
 }
 
 export interface CaPreviousEmployment {
-  fromDate: firebase.firestore.Timestamp | null;
+  fromDate: Timestamp | null;
   type?: CaPreviousEmploymentType;
-  toDate: firebase.firestore.Timestamp | null;
+  toDate: Timestamp | null;
   employerName: string;
   daysWorked: number | null;
 }
@@ -65,7 +67,7 @@ export interface CaUser extends CaUserId, StoreItem, StoreItemTimestamped {
   birthName?: string;
   origPhotoURL?: string;
   photoURL?: string;
-  dateOfBirth: firebase.firestore.Timestamp;
+  dateOfBirth: Timestamp;
   businessUnit?: CaBusinessUnitType;
   city?: string;
   state: string;
@@ -87,11 +89,11 @@ export interface CaUser extends CaUserId, StoreItem, StoreItemTimestamped {
   socialSecurityNumber?: string;
   denomination?: CaDenominationType;
   driversLicense?: boolean;
-  driversLicenseFrontPhotoURL?: string | firebase.firestore.FieldValue;
-  driversLicenseBackPhotoURL?: string | firebase.firestore.FieldValue;
+  driversLicenseFrontPhotoURL?: string | FieldValue;
+  driversLicenseBackPhotoURL?: string | FieldValue;
   availableAsDriver?: boolean;
-  driversLicenseDateIssued?: firebase.firestore.Timestamp;
-  nextAvailability?: firebase.firestore.Timestamp | null;
+  driversLicenseDateIssued?: Timestamp;
+  nextAvailability?: Timestamp | null;
   nextAvailabilityComment?: string;
   advertisedThrough?: CaAdvertisedThroughType;
   onboardingState?: CaOnboardingState;

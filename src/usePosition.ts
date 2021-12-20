@@ -5,7 +5,7 @@ export interface Position {
 }
 export const usePosition = () => {
   const [position, setPosition] = useState<Position | null>(null);
-  const [error, setError] = useState<PositionError | null>(null);
+  const [error, setError] = useState<GeolocationPositionError | null>(null);
   const [active, setActive] = useState(true);
 
   const onChange = ({ coords }: { coords: Position }) => {
