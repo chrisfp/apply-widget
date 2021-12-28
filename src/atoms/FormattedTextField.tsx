@@ -1,7 +1,7 @@
-import { InputBaseProps } from "@material-ui/core";
+import { InputBaseProps } from "@mui/material";
 import MuiTextField, {
   TextFieldProps as MuiTextFieldProps
-} from "@material-ui/core/TextField";
+} from "@mui/material/TextField";
 import { FieldProps, getIn } from "formik";
 import * as React from "react";
 

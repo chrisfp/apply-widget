@@ -1,7 +1,5 @@
-import { Theme } from "@material-ui/core";
-import { TypographyOptions } from "@material-ui/core/styles/createTypography";
+import { TypographyOptions } from "@mui/material/styles/createTypography";
 
-export const typography = (palette: Theme["palette"]) =>
-  ({
-    fontFamily: ["roboto", "sans-serif"].join(",")
-  } as TypographyOptions);
+export const typography = {
+  fontFamily: ["sofia-pro", "sans-serif"].join(","),
+} as TypographyOptions;

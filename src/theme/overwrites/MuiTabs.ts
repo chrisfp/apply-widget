@@ -1,8 +1,12 @@
-import { Theme } from "@material-ui/core";
+import { Theme } from "@mui/material";
 
 export const MuiTabs = (theme: Theme) => ({
-  root: {},
-  indicator: {
-    // height: 1
+  styleOverrides: {
+    root: {},
+    indicator: {
+      // height: 1
+      zIndex: 3,
+      backgroundColor: theme.palette.primary.main,
+    },
   },
 });

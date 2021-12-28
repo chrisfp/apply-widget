@@ -1,4 +1,4 @@
-import { createMuiTheme, ThemeOptions } from "@material-ui/core";
+import { createTheme, ThemeOptions } from "@mui/material";
 
 import { overwrites } from "./overwrites/overwrites";
 import { palette } from "./palette";
@@ -9,10 +9,9 @@ const baseTheme: ThemeOptions = {
   typography,
 };
 
-const themeWithColors = createMuiTheme(baseTheme);
-export const theme = createMuiTheme({
-  ...baseTheme,
-  overrides: overwrites(themeWithColors),
+const themeWithColors = createTheme(baseTheme);
+export const theme = createTheme({
+  palette,
+  typography,
+  components: overwrites(themeWithColors),
 });
-
-export type CustomTheme = typeof theme;

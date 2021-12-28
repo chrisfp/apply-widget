@@ -1,8 +1,8 @@
 import { Theme } from "@mui/material";
 
-export const MuiPaper = (theme: Theme) => ({
+export const MuiAlert = (theme: Theme) => ({
   styleOverrides: {
-    rounded: {
+    root: {
       borderRadius: theme.spacing(2),
     },
   },

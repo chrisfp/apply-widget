@@ -1,13 +1,16 @@
-import "fontsource-roboto";
-
-import DateFnsUtils from "@date-io/date-fns";
-import { Box, ThemeProvider } from "@material-ui/core";
-import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import deLocale from "date-fns/locale/de";
+import { LocalizationProvider } from "@mui/lab";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import { Box, StyledEngineProvider, Theme, ThemeProvider } from "@mui/material";
+import de from "date-fns/locale/de";
 import React from "react";
 
 import { ApplyForm } from "./organisms/ApplyForm";
 import { theme } from "./theme/theme";
+
+declare module "@mui/styles/defaultTheme" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
 
 export interface AppProps {
   companyId: string;
@@ -16,12 +19,14 @@ export interface AppProps {
 
 export function App({ companyId, businessUnits }: AppProps) {
   return (
-    <ThemeProvider theme={theme}>
-      <MuiPickersUtilsProvider utils={DateFnsUtils} locale={deLocale}>
-        <Box p={2} style={{ backgroundColor: "#fff" }}>
-          <ApplyForm companyId={companyId} businessUnits={businessUnits} />
-        </Box>
-      </MuiPickersUtilsProvider>
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <LocalizationProvider dateAdapter={AdapterDateFns} locale={de}>
+          <Box p={2} style={{ backgroundColor: "#fff" }}>
+            <ApplyForm companyId={companyId} businessUnits={businessUnits} />
+          </Box>
+        </LocalizationProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }

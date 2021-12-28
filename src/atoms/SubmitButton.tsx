@@ -1,19 +1,15 @@
-import {
-  Button,
-  CircularProgress,
-  createStyles,
-  makeStyles,
-  Theme
-} from "@material-ui/core";
-import { ButtonProps } from "@material-ui/core/Button";
+import { Button, CircularProgress, Theme } from "@mui/material";
+import { ButtonProps } from "@mui/material/Button";
+import createStyles from "@mui/styles/createStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import React from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     spinner: {
       color: theme.palette.primary.contrastText,
-      margin: theme.spacing(1) * 0.5
-    }
+      margin: theme.spacing(0.5),
+    },
   })
 );
 

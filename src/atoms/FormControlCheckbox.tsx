@@ -3,13 +3,13 @@ import {
   FormControl,
   FormControlLabel,
   FormHelperText
-} from "@material-ui/core";
+} from "@mui/material";
 import { Field, FieldProps, getIn } from "formik";
-import { Checkbox } from "formik-material-ui";
+import { Checkbox } from "formik-mui";
 import React from "react";
 
 export interface FormControlCheckboxProps {
-  label: React.ReactNode;
+  label: React.ReactElement;
 }
 
 export const FormControlCheckbox: React.FunctionComponent<FormControlCheckboxProps &
@@ -25,20 +25,22 @@ export const FormControlCheckbox: React.FunctionComponent<FormControlCheckboxPro
   const hasError = touchedVal && errorText !== undefined;
 
   return (
-    <FormControl error={hasError}>
-      <FormControlLabel
-        control={
-          <Field
-            type="checkbox"
-            color="primary"
-            name={name}
-            component={Checkbox}
-            {...props}
-          />
-        }
-        label={label}
-      />
-      {hasError && <FormHelperText>{errorText}</FormHelperText>}
-    </FormControl>
+    <div className={props.className}>
+      <FormControl error={hasError}>
+        <FormControlLabel
+          control={
+            <Field
+              type="checkbox"
+              color="primary"
+              name={name}
+              component={Checkbox}
+              {...props}
+            />
+          }
+          label={label}
+        />
+        {hasError && <FormHelperText>{errorText}</FormHelperText>}
+      </FormControl>
+    </div>
   );
 };

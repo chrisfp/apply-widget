@@ -1,3 +1,4 @@
+import { DraftsTwoTone } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -5,31 +6,29 @@ import {
   FormHelperText,
   Grid,
   Link,
-  makeStyles,
   MenuItem,
   Typography
-} from "@material-ui/core";
-import { DraftsTwoTone } from "@material-ui/icons";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { addYears } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import { Field, Form, Formik, FormikProps } from "formik";
-import { TextField } from "formik-material-ui";
-import { KeyboardDatePicker } from "formik-material-ui-pickers";
+import { TextField } from "formik-mui";
 import parsePhoneNumberFromString from "libphonenumber-js";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as yup from "yup";
 
-import { AdvertisedThrough } from "../atoms/AdvertisedThrough";
 import { BusinessUnit } from "../atoms/BusinessUnit";
 import { FormattedTextField } from "../atoms/FormattedTextField";
 import { FormControlCheckbox } from "../atoms/FormControlCheckbox";
+import { FormikDatePickerDate } from "../atoms/FormikDatePickerDate";
 import { SubmitButton } from "../atoms/SubmitButton";
 import {
   formatCapitalizeFirst,
   formatLowerCaseTrim,
   formatPhoneNumberCountryCode
 } from "../formatters";
-import { firebaseApply } from "../index";
+import { firebaseApply, firebaseCompanyDetailsFetch } from "../index";
 import { CaAdvertisedThroughType, CaBusinessUnitType } from "../types/enums";
 import { CaUser } from "../types/model";
 import { enumKeys } from "../utils/helpers";
@@ -149,7 +148,8 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: `transparent !important`,
       border: `none !important`,
       fontSize: 14,
-      height: 56,
+      height: "58px !important",
+      boxSizing: "border-box",
       paddingBottom: 10,
       paddingLeft: 12,
       paddingRight: 12,
@@ -227,6 +227,20 @@ export const ApplyForm = ({
   const [applied, setApplied] = useState(false);
   const classes = useStyles();
   const [errorMessage, setErrorMessage] = useState("");
+  const [jobPortals, setJobPortals] = useState<string[]>([]);
+  useEffect(() => {
+    async function getData() {
+      const data = await firebaseCompanyDetailsFetch(companyId);
+      if (data) {
+        const { jobPortals } = data;
+        const newData = { jobPortals };
+        setJobPortals(newData.jobPortals);
+      }
+    }
+    if (companyId) {
+      getData();
+    }
+  }, [companyId]);
 
   return (
     <React.Fragment>
@@ -354,18 +368,14 @@ export const ApplyForm = ({
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Field
-                    fullWidth
-                    inputVariant="filled"
                     name="dateOfBirth"
-                    openTo="year"
-                    views={["year", "month", "date"]}
+                    fullWidth
                     maxDate={addYears(new Date(), -16)}
                     maxDateMessage="Mindestalter: 16 Jahre"
                     invalidDateMessage="Ungültiges Datum"
                     label="Geburtsdatum"
                     autoComplete="no"
-                    format="dd.MM.yyyy"
-                    component={KeyboardDatePicker}
+                    component={FormikDatePickerDate}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -400,11 +410,9 @@ export const ApplyForm = ({
                     select
                     component={TextField}
                   >
-                    {enumKeys(CaAdvertisedThroughType).map(key => (
-                      <MenuItem key={key} value={CaAdvertisedThroughType[key]}>
-                        <AdvertisedThrough>
-                          {CaAdvertisedThroughType[key]}
-                        </AdvertisedThrough>
+                    {Object.values(jobPortals).map((value: string) => (
+                      <MenuItem key={value} value={value}>
+                        {value}
                       </MenuItem>
                     ))}
                   </Field>
@@ -487,9 +495,8 @@ export const ApplyForm = ({
                           <Typography variant="body2" color="textSecondary">
                             Ich bin damit einverstanden, dass die Bearbeitung
                             und Verwaltung meiner Bewerbungsdaten über den
-                            externen Dienstleister Signature CP UG
-                            (haftungsbeschränkt) erfolgt. Die
-                            Datenschutzhinweise von Signature findest du{" "}
+                            externen Dienstleister Signature F2F GmbH erfolgt.
+                            Die Datenschutzhinweise von Signature findest du{" "}
                             <Link href="https://signatureapp.de/privacy">
                               hier
                             </Link>

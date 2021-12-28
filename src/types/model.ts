@@ -126,3 +126,16 @@ export const extractUserPublicSnippet = (
     fundraiserNumber: user.fundraiserNumber
   });
 export type CaUserPublicSnippet = ReturnType<typeof extractUserPublicSnippet>;
+
+export interface CaCompanyId {
+  companyId: string;
+}
+export interface CaCompany
+  extends CaCompanyId,
+    StoreItem,
+    StoreItemTimestamped {
+  name: string;
+  logoUrl: string;
+  jobPortals: string[];
+  businessUnits: string[];
+}

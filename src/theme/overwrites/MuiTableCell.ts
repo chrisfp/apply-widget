@@ -1,7 +1,9 @@
-import { Theme } from "@material-ui/core";
+import { Theme } from "@mui/material";
 
 export const MuiTableCell = (theme: Theme) => ({
-  root: {
-    borderBottom: `1px solid ${theme.palette.divider}`,
+  styleOverrides: {
+    root: {
+      borderBottom: `1px solid ${theme.palette.divider}`,
+    },
   },
 });

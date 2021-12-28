@@ -1,4 +1,4 @@
-import { PaletteOptions } from "@material-ui/core/styles/createPalette";
+import { PaletteOptions } from "@mui/material/styles";
 
 export const palette = {
   // type: "dark",
@@ -6,17 +6,17 @@ export const palette = {
   // divider: "#aaa",
   divider: "#eaeaea",
   primary: {
-    main: "#333",
+    main: "#006837",
     // main: "#181828"
     // main: "#1a375e"
     // main: "#ef9a9a"
   },
   secondary: {
-    main: "#555",
+    main: "#E3E4D3",
     // main: "#f06292"
     // main: "#f06292"
   },
   background: {
-    // default: "#f5f5f5"
+    default: "#fff",
   },
 } as PaletteOptions;
