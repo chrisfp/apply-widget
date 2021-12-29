@@ -18,7 +18,6 @@ import parsePhoneNumberFromString from "libphonenumber-js";
 import React, { useEffect, useRef, useState } from "react";
 import * as yup from "yup";
 
-import { BusinessUnit } from "../atoms/BusinessUnit";
 import { FormattedTextField } from "../atoms/FormattedTextField";
 import { FormControlCheckbox } from "../atoms/FormControlCheckbox";
 import { FormikDatePickerDate } from "../atoms/FormikDatePickerDate";
@@ -29,9 +28,7 @@ import {
   formatPhoneNumberCountryCode
 } from "../formatters";
 import { firebaseApply, firebaseCompanyDetailsFetch } from "../index";
-import { CaAdvertisedThroughType, CaBusinessUnitType } from "../types/enums";
 import { CaUser } from "../types/model";
-import { enumKeys } from "../utils/helpers";
 
 export const validationSchema = (noLegal: boolean = false) => () =>
   yup.object().shape({
@@ -57,7 +54,7 @@ export const validationSchema = (noLegal: boolean = false) => () =>
       .trim()
       .required("Pflichtfeld"),
     recommendationClaim: yup.string().when("advertisedThrough", {
-      is: CaAdvertisedThroughType.RECOMMENDATION,
+      is: "Empfehlung",
       then: yup.string().required("Name und/oder Fundraisernummer erforderlich")
     }),
     phoneNumber: yup
@@ -178,7 +175,7 @@ export interface ApplyFormValues {
   lastName: string;
   email: string;
   recommendationClaim: string;
-  businessUnit: CaBusinessUnitType | "";
+  businessUnit: string;
   phoneNumber: string;
   disclaimerConfirmed: boolean;
   contactConfirmed: boolean;
@@ -200,11 +197,10 @@ export const ApplyForm = ({
   user,
   noLegal,
   companyId,
-  businessUnits,
   submitText = "Jetzt Bewerben!",
   onSubmit
 }: ApplyFormFormikProps) => {
-  const [initialValues] = useState<ApplyFormValues>({
+  const [initialValues, setInitialValues] = useState<ApplyFormValues>({
     firstName: "",
     advertisedThrough: "",
     recommendationClaim: "",
@@ -212,10 +208,7 @@ export const ApplyForm = ({
     dateOfBirth: null,
     lastName: "",
     email: "",
-    businessUnit:
-      businessUnits?.length === 1
-        ? (businessUnits[0] as CaBusinessUnitType)
-        : "",
+    businessUnit: "",
     phoneNumber: "",
     disclaimerConfirmed: false,
     contactConfirmed: false,
@@ -228,6 +221,24 @@ export const ApplyForm = ({
   const classes = useStyles();
   const [errorMessage, setErrorMessage] = useState("");
   const [jobPortals, setJobPortals] = useState<string[]>([]);
+  const [businessUnits, setBusinessUnits] = useState([""]);
+
+  useEffect(() => {
+    async function getData() {
+      const data = await firebaseCompanyDetailsFetch(companyId);
+      if (data) {
+        setBusinessUnits(data.businessUnits);
+        setInitialValues({
+          ...initialValues,
+          businessUnit: businessUnits[0]
+        });
+      }
+    }
+    if (companyId) {
+      getData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [companyId]);
   useEffect(() => {
     async function getData() {
       const data = await firebaseCompanyDetailsFetch(companyId);
@@ -261,11 +272,8 @@ export const ApplyForm = ({
             values.phoneNumber = `+49${phoneNumberStripped.substr(1)}`;
           }
           if (recruitingMode) {
-            setFieldValue(
-              "advertisedThrough",
-              CaAdvertisedThroughType.RECOMMENDATION
-            );
-            values.advertisedThrough = CaAdvertisedThroughType.RECOMMENDATION;
+            setFieldValue("advertisedThrough", "Empfehlung");
+            values.advertisedThrough = "Empfehlung";
           }
           if (!values.dateOfBirth) {
             throw new Error("dateOfBirth missing");
@@ -418,8 +426,7 @@ export const ApplyForm = ({
                   </Field>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  {values.advertisedThrough ===
-                    CaAdvertisedThroughType.RECOMMENDATION && (
+                  {values.advertisedThrough === "Empfehlung" && (
                     <Field
                       fullWidth
                       variant="filled"
@@ -442,34 +449,20 @@ export const ApplyForm = ({
                         Mein gewünschter Einsatzort:
                       </Typography>
                       <div className={classes.chips}>
-                        {enumKeys(CaBusinessUnitType)
-                          .filter(
-                            key =>
-                              CaBusinessUnitType[key] !==
-                                CaBusinessUnitType.UNKNOWN &&
-                              businessUnits.includes(CaBusinessUnitType[key])
-                          )
-                          .map(key => (
-                            <Chip
-                              key={key}
-                              color={
-                                values.businessUnit === CaBusinessUnitType[key]
-                                  ? "primary"
-                                  : "default"
-                              }
-                              onClick={() =>
-                                setFieldValue(
-                                  "businessUnit",
-                                  CaBusinessUnitType[key]
-                                )
-                              }
-                              label={
-                                <BusinessUnit>
-                                  {CaBusinessUnitType[key]}
-                                </BusinessUnit>
-                              }
-                            ></Chip>
-                          ))}
+                        {businessUnits.map(businessUnit => (
+                          <Chip
+                            key={businessUnit}
+                            color={
+                              values.businessUnit === businessUnit
+                                ? "primary"
+                                : "default"
+                            }
+                            onClick={() =>
+                              setFieldValue("businessUnit", businessUnit)
+                            }
+                            label={businessUnit}
+                          ></Chip>
+                        ))}
                       </div>
                       {errors.businessUnit && (
                         <FormHelperText

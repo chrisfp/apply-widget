@@ -1,21 +1,3 @@
-export enum CaAdvertisedThroughType {
-  STUDENTJOB = "STUDENTJOB",
-  RECRUDO = "RECRUDO",
-  STEPSTONE = "STEPSTONE",
-  INDEED = "INDEED",
-  RECOMMENDATION = "RECOMMENDATION",
-  FACEBOOK = "FACEBOOK",
-  INSTAGRAM = "INSTAGRAM",
-  OTHER = "OTHER"
-}
-
-export enum CaBusinessUnitType {
-  UNKNOWN = "UNKNOWN",
-  DUS = "DUS",
-  BERLIN = "BERLIN",
-  TRAVEL = "TRAVEL"
-}
-
 export enum CaDenominationType {
   AK = "AK",
   EV = "EV",

@@ -2,8 +2,6 @@ import { FieldValue, Timestamp } from "firebase/firestore";
 
 import { removeUndefinedFields } from "../utils/helpers";
 import {
-  CaAdvertisedThroughType,
-  CaBusinessUnitType,
   CaDenominationType,
   CaEmployeeOccupationType,
   CaOnboardingState,
@@ -68,7 +66,7 @@ export interface CaUser extends CaUserId, StoreItem, StoreItemTimestamped {
   origPhotoURL?: string;
   photoURL?: string;
   dateOfBirth: Timestamp;
-  businessUnit?: CaBusinessUnitType;
+  businessUnit?: string;
   city?: string;
   state: string;
   street?: string;
@@ -95,7 +93,7 @@ export interface CaUser extends CaUserId, StoreItem, StoreItemTimestamped {
   driversLicenseDateIssued?: Timestamp;
   nextAvailability?: Timestamp | null;
   nextAvailabilityComment?: string;
-  advertisedThrough?: CaAdvertisedThroughType;
+  advertisedThrough?: string;
   onboardingState?: CaOnboardingState;
   recommendationClaim?: string;
   companyId: string;
