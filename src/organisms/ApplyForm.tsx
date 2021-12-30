@@ -55,13 +55,15 @@ export const validationSchema = (noLegal: boolean = false) => () =>
       .required("Pflichtfeld"),
     recommendationClaim: yup.string().when("advertisedThrough", {
       is: "Empfehlung",
-      then: yup.string().required("Name und/oder Fundraisernummer erforderlich")
+      then: yup
+        .string()
+        .required("Name und/oder Fundraising-Nummer erforderlich")
     }),
     phoneNumber: yup
       .string()
       .trim()
       .min(4)
-      .required()
+      .required("Pflichtfeld")
       .test({
         name: "validNumber",
         test: function(phoneNumber?: string) {
@@ -85,7 +87,7 @@ export const validationSchema = (noLegal: boolean = false) => () =>
             .bool()
             .oneOf(
               [true],
-              "Das Akzeptieren unserer AGB und Datenschutzhinweise ist erforderlich."
+              "Das Akzeptieren der AGBs und Datenschutzhinweise ist erforderlich."
             )
             .required("Pflichtfeld"),
           contactConfirmed: yup
