@@ -104,6 +104,7 @@ export const validationSchema = (noLegal: boolean = false) => () =>
       .required("Pflichtfeld"),
     dateOfBirth: yup
       .date()
+      .min(new Date(1900, 0, 1), "Format: TT.MM.YYYY")
       .nullable()
       .required("Pflichtfeld")
   });
