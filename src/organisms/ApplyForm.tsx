@@ -130,18 +130,6 @@ const useStyles = makeStyles(theme => ({
   fullWidth: {
     width: "100%"
   },
-  checkboxTop: {
-    marginTop: theme.spacing(1),
-    "& label": {
-      alignItems: "start"
-    },
-    "& label > span:first-child": {
-      marginTop: -10
-    },
-    "& .MuiCheckbox-root": {
-      marginTop: -theme.spacing(1)
-    }
-  },
   fixBorders: {
     "& input": {
       color: `${theme.palette.text.primary} !important`,
@@ -192,7 +180,8 @@ interface ApplyFormFormikProps {
   noLegal?: boolean;
   submitText?: string;
   companyId: string;
-  businessUnits?: string;
+  redirect?: string;
+  businessUnits?: string[];
   onSubmit?: (values: ApplyFormValues) => void;
 }
 
@@ -200,6 +189,8 @@ export const ApplyForm = ({
   user,
   noLegal,
   companyId,
+  businessUnits: businessUnitsPreselection = [],
+  redirect = "",
   submitText = "Jetzt Bewerben!",
   onSubmit
 }: ApplyFormFormikProps) => {
@@ -230,7 +221,11 @@ export const ApplyForm = ({
     async function getData() {
       const data = await firebaseCompanyDetailsFetch(companyId);
       if (data) {
-        setBusinessUnits(data.businessUnits);
+        setBusinessUnits(
+          data.businessUnits.filter(unit =>
+            businessUnitsPreselection.some(filterUnit => filterUnit === unit)
+          )
+        );
         setInitialValues({
           ...initialValues,
           businessUnit: businessUnits[0]
@@ -288,6 +283,9 @@ export const ApplyForm = ({
             });
             onSubmit?.(values);
             setApplied(true);
+            if (redirect) {
+              window.location.replace(redirect);
+            }
           } catch (error) {
             if (error instanceof Error) {
               if (
@@ -482,7 +480,7 @@ export const ApplyForm = ({
 
                 {!noLegal && (
                   <>
-                    <Grid item xs={12} className={classes.checkboxTop}>
+                    <Grid item xs={12}>
                       <Field
                         color="primary"
                         name="disclaimerConfirmed"

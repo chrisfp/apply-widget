@@ -81,6 +81,7 @@ export const firebaseCompanyDetailsFetch = async (companyId: string) => {
   } else return null;
 };
 
+const redirect = rootEl?.dataset?.redirect;
 const companyId = rootEl?.dataset?.companyId;
 const businessUnits =
   rootEl?.dataset?.businessUnits && JSON.parse(rootEl?.dataset?.businessUnits);
@@ -90,7 +91,11 @@ ReactDOM.render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {companyId ? (
-        <App companyId={companyId} businessUnits={businessUnits} />
+        <App
+          companyId={companyId}
+          businessUnits={businessUnits}
+          redirect={redirect}
+        />
       ) : (
         <p>
           Please pass a valid company to the #signature-apply-widget element

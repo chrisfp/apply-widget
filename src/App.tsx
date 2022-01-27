@@ -14,16 +14,21 @@ declare module "@mui/styles/defaultTheme" {
 
 export interface AppProps {
   companyId: string;
-  businessUnits?: string;
+  businessUnits?: string[];
+  redirect?: string;
 }
 
-export function App({ companyId, businessUnits }: AppProps) {
+export function App({ companyId, businessUnits, redirect }: AppProps) {
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDateFns} locale={de}>
           <Box p={2} style={{ backgroundColor: "#fff" }}>
-            <ApplyForm companyId={companyId} businessUnits={businessUnits} />
+            <ApplyForm
+              companyId={companyId}
+              businessUnits={businessUnits}
+              redirect={redirect}
+            />
           </Box>
         </LocalizationProvider>
       </ThemeProvider>
