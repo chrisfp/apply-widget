@@ -1,7 +1,6 @@
 import { DraftsTwoTone } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Chip,
   FormHelperText,
   Grid,
@@ -28,7 +27,6 @@ import {
   formatPhoneNumberCountryCode
 } from "../formatters";
 import { firebaseApply, firebaseCompanyDetailsFetch } from "../index";
-import { CaUser } from "../types/model";
 
 export const validationSchema = (noLegal: boolean = false) => () =>
   yup.object().shape({
@@ -176,7 +174,6 @@ export interface ApplyFormValues {
 }
 
 interface ApplyFormFormikProps {
-  user?: CaUser;
   noLegal?: boolean;
   submitText?: string;
   companyId: string;
@@ -186,7 +183,6 @@ interface ApplyFormFormikProps {
 }
 
 export const ApplyForm = ({
-  user,
   noLegal,
   companyId,
   businessUnits: businessUnitsPreselection = [],
@@ -208,7 +204,7 @@ export const ApplyForm = ({
     contactConfirmed: false,
     companyId
   });
-  const recruitingMode = Boolean(user);
+
   let formikRef = useRef<FormikProps<any>>();
   const nameField = useRef<HTMLInputElement | null>(null);
   const [applied, setApplied] = useState(false);
@@ -221,15 +217,16 @@ export const ApplyForm = ({
     async function getData() {
       const data = await firebaseCompanyDetailsFetch(companyId);
       if (data) {
-        setBusinessUnits(
-          data.businessUnits.filter(unit =>
-            businessUnitsPreselection.some(filterUnit => filterUnit === unit)
-          )
+        const filteredBusinessUnits = data.businessUnits.filter(unit =>
+          businessUnitsPreselection.some(filterUnit => filterUnit === unit)
         );
-        setInitialValues({
-          ...initialValues,
-          businessUnit: businessUnits[0]
-        });
+        setBusinessUnits(filteredBusinessUnits);
+        if (filteredBusinessUnits.length === 1) {
+          setInitialValues({
+            ...initialValues,
+            businessUnit: filteredBusinessUnits[0]
+          });
+        }
       }
     }
     if (companyId) {
@@ -250,12 +247,12 @@ export const ApplyForm = ({
       getData();
     }
   }, [companyId]);
-
   return (
     <React.Fragment>
       <Formik
         innerRef={formikRef as any}
         initialValues={initialValues}
+        enableReinitialize
         validationSchema={validationSchema(noLegal)}
         onSubmit={async (values, { setFieldError, setFieldValue }) => {
           const phoneNumberStripped = `${values.phoneNumber}`.replace(
@@ -268,10 +265,6 @@ export const ApplyForm = ({
           } else if (phoneNumberStripped.startsWith("0")) {
             setFieldValue("phoneNumber", `+49${phoneNumberStripped.substr(1)}`);
             values.phoneNumber = `+49${phoneNumberStripped.substr(1)}`;
-          }
-          if (recruitingMode) {
-            setFieldValue("advertisedThrough", "Empfehlung");
-            values.advertisedThrough = "Empfehlung";
           }
           if (!values.dateOfBirth) {
             throw new Error("dateOfBirth missing");
@@ -318,27 +311,6 @@ export const ApplyForm = ({
         }) =>
           !applied ? (
             <Form className={classes.fixBorders}>
-              <input name="city" style={{ opacity: 0, position: "absolute" }} />
-              {recruitingMode && (
-                <>
-                  <input
-                    name="firstName"
-                    style={{ opacity: 0, position: "absolute" }}
-                  />
-                  <input
-                    name="lastName"
-                    style={{ opacity: 0, position: "absolute" }}
-                  />
-                  <input
-                    name="dateOfBirth"
-                    style={{ opacity: 0, position: "absolute" }}
-                  />
-                  <input
-                    name="phoneNumber"
-                    style={{ opacity: 0, position: "absolute" }}
-                  />
-                </>
-              )}
               <Grid container spacing={2} className={classes.formParagraph}>
                 <Grid item xs={12} sm={6}>
                   <Field
@@ -522,7 +494,10 @@ export const ApplyForm = ({
               <SubmitButton
                 fullWidth
                 isSubmitting={isSubmitting}
-                onClick={submitForm}
+                onClick={() => {
+                  console.log("1");
+                  submitForm();
+                }}
               >
                 {submitText}
               </SubmitButton>
@@ -545,23 +520,6 @@ export const ApplyForm = ({
                   Fast geschafft! Bitte öffne jetzt die Bestätigungsmail in
                   deinem Email-Postfach und klicke den Bestätigungslink.
                 </Typography>
-              </Box>
-              <Box
-                display="flex"
-                justifyContent="center"
-                className={classes.gutterTop}
-              >
-                {user && (
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      resetForm();
-                      setApplied(false);
-                    }}
-                  >
-                    zurück
-                  </Button>
-                )}
               </Box>
             </React.Fragment>
           )
