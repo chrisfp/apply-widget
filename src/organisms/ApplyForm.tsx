@@ -1,5 +1,6 @@
 import { DraftsTwoTone } from "@mui/icons-material";
 import {
+  Alert,
   Box,
   Chip,
   FormHelperText,
@@ -279,23 +280,26 @@ export const ApplyForm = ({
             if (redirect) {
               window.location.replace(redirect);
             }
-          } catch (error) {
-            if (error instanceof Error) {
-              if (
-                error.message === "Die Email Adresse ist bereits registriert"
-              ) {
-                setFieldError("email", error.message);
-              } else if (error.message === "Ungültige Email Adresse") {
-                setFieldError("email", error.message);
-              } else if (
-                error.message === "Die Handynummer ist bereits registriert"
-              ) {
-                setFieldError("phoneNumber", error.message);
-              } else if (error.message === "Ungültige Handynummer") {
-                setFieldError("phoneNumber", error.message);
-              } else {
-                setErrorMessage(error.message);
-              }
+          } catch (e) {
+            const error: any = e;
+            if (
+              error.message === "Die E-Mail Adresse ist bereits registriert"
+            ) {
+              setFieldError("email", error.message);
+            } else if (error.message === "Ungültige E-Mail Adresse") {
+              setFieldError("email", error.message);
+            } else if (
+              error.message === "Die Handynummer ist bereits registriert"
+            ) {
+              setFieldError("phoneNumber", error.message);
+            } else if (error.message === "Ungültige Handynummer") {
+              setFieldError("phoneNumber", error.message);
+            } else if (error.code === "unknown") {
+              setErrorMessage(`Unbekannter Fehler: ${error.message}`);
+            } else {
+              // eslint-disable-next-line no-console
+              console.error(`${error}`);
+              setErrorMessage(`Unbekannter Fehler: ${error}`);
             }
           }
           return;
@@ -486,9 +490,9 @@ export const ApplyForm = ({
                 )}
               </Grid>
               {errorMessage && (
-                <FormHelperText error className={classes.errorlabel}>
+                <Alert sx={{ mb: 3, mt: 4, pt: 1 }} severity="error">
                   {errorMessage}
-                </FormHelperText>
+                </Alert>
               )}
 
               <SubmitButton
