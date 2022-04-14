@@ -355,8 +355,8 @@ export const ApplyForm = ({
                   <Field
                     name="dateOfBirth"
                     fullWidth
-                    maxDate={addYears(new Date(), -16)}
-                    maxDateMessage="Mindestalter: 16 Jahre"
+                    maxDate={addYears(new Date(), -17)}
+                    maxDateMessage="Mindestalter: 17 Jahre"
                     invalidDateMessage="Ungültiges Datum"
                     label="Geburtsdatum"
                     autoComplete="no"
