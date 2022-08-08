@@ -28,8 +28,12 @@ import {
   formatPhoneNumberCountryCode
 } from "../formatters";
 import { firebaseApply, firebaseCompanyDetailsFetch } from "../index";
+import { CaCompany } from "../types/model";
 
-export const validationSchema = (noLegal: boolean = false) => () =>
+export const validationSchema = (
+  noLegal: boolean = false,
+  noBusinessUnit: boolean = false
+) => () =>
   yup.object().shape({
     firstName: yup
       .string()
@@ -48,10 +52,14 @@ export const validationSchema = (noLegal: boolean = false) => () =>
       .string()
       .trim()
       .required("Pflichtfeld"),
-    businessUnit: yup
-      .string()
-      .trim()
-      .required("Pflichtfeld"),
+    ...(noBusinessUnit
+      ? {}
+      : {
+          businessUnit: yup
+            .string()
+            .trim()
+            .required("Pflichtfeld")
+        }),
     recommendationClaim: yup.string().when("advertisedThrough", {
       is: "Empfehlung",
       then: yup
@@ -211,7 +219,7 @@ export const ApplyForm = ({
   const [applied, setApplied] = useState(false);
   const classes = useStyles();
   const [errorMessage, setErrorMessage] = useState("");
-  const [jobPortals, setJobPortals] = useState<string[]>([]);
+  const [company, setCompany] = useState<CaCompany>();
   const [businessUnits, setBusinessUnits] = useState([""]);
 
   useEffect(() => {
@@ -239,9 +247,7 @@ export const ApplyForm = ({
     async function getData() {
       const data = await firebaseCompanyDetailsFetch(companyId);
       if (data) {
-        const { jobPortals } = data;
-        const newData = { jobPortals };
-        setJobPortals(newData.jobPortals);
+        setCompany(data);
       }
     }
     if (companyId) {
@@ -254,7 +260,7 @@ export const ApplyForm = ({
         innerRef={formikRef as any}
         initialValues={initialValues}
         enableReinitialize
-        validationSchema={validationSchema(noLegal)}
+        validationSchema={validationSchema(noLegal, businessUnits.length < 2)}
         onSubmit={async (values, { setFieldError, setFieldValue }) => {
           const phoneNumberStripped = `${values.phoneNumber}`.replace(
             /^\s+|\s+$/g,
@@ -312,8 +318,8 @@ export const ApplyForm = ({
           values,
           setFieldValue,
           errors
-        }) =>
-          !applied ? (
+        }) => {
+          return !applied ? (
             <Form className={classes.fixBorders}>
               <Grid container spacing={2} className={classes.formParagraph}>
                 <Grid item xs={12} sm={6}>
@@ -395,11 +401,13 @@ export const ApplyForm = ({
                     select
                     component={TextField}
                   >
-                    {Object.values(jobPortals).map((value: string) => (
-                      <MenuItem key={value} value={value}>
-                        {value}
-                      </MenuItem>
-                    ))}
+                    {Object.values(company?.jobPortals || []).map(
+                      (value: string) => (
+                        <MenuItem key={value} value={value}>
+                          {value}
+                        </MenuItem>
+                      )
+                    )}
                   </Field>
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -480,7 +488,7 @@ export const ApplyForm = ({
                         component={FormControlCheckbox}
                         label={
                           <Typography variant="body2" color="textSecondary">
-                            Apollon darf mich telefonisch und per Email
+                            {company?.name} darf mich telefonisch und per Email
                             kontaktieren.
                           </Typography>
                         }
@@ -499,7 +507,6 @@ export const ApplyForm = ({
                 fullWidth
                 isSubmitting={isSubmitting}
                 onClick={() => {
-                  console.log("1");
                   submitForm();
                 }}
               >
@@ -526,8 +533,8 @@ export const ApplyForm = ({
                 </Typography>
               </Box>
             </React.Fragment>
-          )
-        }
+          );
+        }}
       </Formik>
     </React.Fragment>
   );
