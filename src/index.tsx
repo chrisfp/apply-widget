@@ -2,6 +2,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/styles";
 import { StyledEngineProvider, Theme } from "@mui/system";
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import {
   collection,
   doc,
@@ -9,7 +10,7 @@ import {
   getFirestore,
   Timestamp
 } from "firebase/firestore";
-import { getFunctions, httpsCallable } from "firebase/functions";
+import { getFunctions } from "firebase/functions";
 import React from "react";
 import ReactDOM from "react-dom";
 
@@ -43,6 +44,8 @@ export const firebaseConfig = {
   apiKey
 };
 
+const httpFunctionsBaseUrl = `https://${process.env.REACT_APP_REGION}-${process.env.REACT_APP_GCP_PROJECT}.cloudfunctions.net`;
+
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
 
@@ -53,19 +56,35 @@ export const functions = getFunctions(
 
 export const COLLECTION_COMPANIES = "companies";
 export const db = getFirestore(firebaseApp);
+export const auth = getAuth(firebaseApp);
 
-export const firebaseApply = async (
+export async function firebaseApply(
   applyData: Omit<ApplyFormValues, "dateOfBirth"> & {
     dateOfBirth: Timestamp;
   },
   user?: CaUser
-) => {
-  const applyCallable = httpsCallable(functions, "apply");
-  return await applyCallable({
+) {
+  const body = {
     ...applyData,
     ...(user ? { _recommendedBy: extractUserPublicSnippet(user) } : {})
+  };
+  const token = await auth.currentUser?.getIdToken();
+  const response = await fetch(`${httpFunctionsBaseUrl}/api/apply/`, {
+    method: "POST",
+
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
   });
-};
+  const result = await response.json();
+  if (response.ok) {
+    return result;
+  } else {
+    throw result;
+  }
+}
 
 export const firebaseCompanyDetailsFetch = async (companyId: string) => {
   const snapshot = await getDoc(
