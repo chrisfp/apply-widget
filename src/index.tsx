@@ -39,12 +39,12 @@ const apiKey = rootEl?.dataset?.apiKey;
 
 export const firebaseConfig = {
   ...firebaseConfigs[
-    process.env.REACT_APP_GCLOUD_PROJECT as keyof typeof firebaseConfigs
+    process.env.REACT_APP_GCP_PROJECT as keyof typeof firebaseConfigs
   ],
   apiKey
 };
 
-const httpFunctionsBaseUrl = `https://${process.env.REACT_APP_REGION}-${process.env.REACT_APP_GCLOUD_PROJECT}.cloudfunctions.net`;
+const httpFunctionsBaseUrl = `https://${process.env.REACT_APP_REGION}-${process.env.REACT_APP_GCP_PROJECT}.cloudfunctions.net`;
 
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
