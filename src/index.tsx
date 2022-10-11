@@ -44,7 +44,7 @@ export const firebaseConfig = {
   apiKey
 };
 
-const httpFunctionsBaseUrl = `https://${process.env.REACT_APP_REGION}-${process.env.REACT_APP_GCP_PROJECT}.cloudfunctions.net`;
+const httpFunctionsBaseUrl = `https://${process.env.REACT_APP_REGION}-${process.env.REACT_APP_GCLOUD_PROJECT}.cloudfunctions.net`;
 
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
