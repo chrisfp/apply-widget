@@ -2,7 +2,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/styles";
 import { StyledEngineProvider, Theme } from "@mui/system";
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
 import {
   collection,
   doc,
@@ -44,6 +43,7 @@ export const firebaseConfig = {
   apiKey
 };
 
+// const httpFunctionsBaseUrl = `http://127.0.0.1:5005/${process.env.REACT_APP_GCP_PROJECT}/${process.env.REACT_APP_REGION}`;
 const httpFunctionsBaseUrl = `https://${process.env.REACT_APP_REGION}-${process.env.REACT_APP_GCP_PROJECT}.cloudfunctions.net`;
 
 // Initialize Firebase
@@ -56,7 +56,6 @@ export const functions = getFunctions(
 
 export const COLLECTION_COMPANIES = "companies";
 export const db = getFirestore(firebaseApp);
-export const auth = getAuth(firebaseApp);
 
 export async function firebaseApply(
   applyData: Omit<ApplyFormValues, "dateOfBirth"> & {
@@ -68,12 +67,9 @@ export async function firebaseApply(
     ...applyData,
     ...(user ? { _recommendedBy: extractUserPublicSnippet(user) } : {})
   };
-  const token = await auth.currentUser?.getIdToken();
   const response = await fetch(`${httpFunctionsBaseUrl}/api/apply/`, {
     method: "POST",
-
     headers: {
-      Authorization: "Bearer " + token,
       "Content-Type": "application/json"
     },
     body: JSON.stringify(body)
