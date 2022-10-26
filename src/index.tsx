@@ -36,6 +36,8 @@ head.appendChild(link);
 const rootEl = document.getElementById("signature-apply-widget");
 const apiKey = rootEl?.dataset?.apiKey;
 
+console.log(process.env.REACT_APP_VERSION);
+
 export const firebaseConfig = {
   ...firebaseConfigs[
     process.env.REACT_APP_GCP_PROJECT as keyof typeof firebaseConfigs
@@ -43,8 +45,9 @@ export const firebaseConfig = {
   apiKey
 };
 
-// const httpFunctionsBaseUrl = `http://127.0.0.1:5005/${process.env.REACT_APP_GCP_PROJECT}/${process.env.REACT_APP_REGION}`;
-const httpFunctionsBaseUrl = `https://${process.env.REACT_APP_REGION}-${process.env.REACT_APP_GCP_PROJECT}.cloudfunctions.net`;
+const httpFunctionsBaseUrl = process.env.REACT_APP_USE_EMULATOR
+  ? `http://127.0.0.1:5005/${process.env.REACT_APP_GCP_PROJECT}/${process.env.REACT_APP_REGION}`
+  : `https://${process.env.REACT_APP_REGION}-${process.env.REACT_APP_GCP_PROJECT}.cloudfunctions.net`;
 
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
@@ -67,7 +70,7 @@ export async function firebaseApply(
     ...applyData,
     ...(user ? { _recommendedBy: extractUserPublicSnippet(user) } : {})
   };
-  const response = await fetch(`${httpFunctionsBaseUrl}/api/apply/`, {
+  const response = await fetch(`${httpFunctionsBaseUrl}/api/apply`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

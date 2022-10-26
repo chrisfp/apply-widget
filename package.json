@@ -41,6 +41,7 @@
   "scripts": {
     "prestart": "echo $(firebase use)",
     "start": "REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') REACT_APP_GCP_PROJECT=$(firebase use) react-scripts start",
+    "start:emulate": "REACT_APP_USE_EMULATOR=true REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') REACT_APP_GCP_PROJECT=$(firebase use) react-scripts start",
     "prebuild": "echo $(firebase use)",
     "build": "REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') REACT_APP_GCP_PROJECT=$(firebase use) react-scripts build",
     "build:widget": "REACT_APP_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') REACT_APP_GCP_PROJECT=$(firebase use) parcel build src/index.tsx --no-source-maps --experimental-scope-hoisting -d build",
