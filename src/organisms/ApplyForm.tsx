@@ -470,7 +470,11 @@ export const ApplyForm = ({
                         name="disclaimerConfirmed"
                         component={FormControlCheckbox}
                         label={
-                          <Typography variant="body2" color="textSecondary">
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            sx={{ mb: "0 !important" }}
+                          >
                             Ich bin damit einverstanden, dass die Bearbeitung
                             und Verwaltung meiner Bewerbungsdaten über den
                             externen Dienstleister Signature F2F GmbH erfolgt.

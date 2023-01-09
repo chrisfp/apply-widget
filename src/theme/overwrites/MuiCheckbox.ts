@@ -5,8 +5,8 @@ export const MuiCheckbox = (theme: Theme) => {
     styleOverrides: {
       root: {
         alignSelf: "flex-start",
-        paddingTop: 0,
-        paddingBottom: 0
+        postion: "relative",
+        top: -10
       }
     }
   };

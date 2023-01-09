@@ -4,9 +4,10 @@ export const MuiFormControlLabel = (theme: Theme) => {
   const overwrite: Components["MuiFormControlLabel"] = {
     styleOverrides: {
       root: {
-        marginTop: theme.spacing(2),
-      },
-    },
+        alignItems: "flex-start",
+        marginTop: theme.spacing(2)
+      }
+    }
   };
   return overwrite;
 };
