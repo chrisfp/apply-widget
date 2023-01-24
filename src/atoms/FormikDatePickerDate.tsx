@@ -1,13 +1,18 @@
-import { DatePicker, DatePickerProps } from "@mui/lab";
 import { TextField, TextFieldProps } from "@mui/material";
-import { isValid } from "date-fns";
+import { DatePicker, DatePickerProps } from "@mui/x-date-pickers";
+import { parse } from "date-fns";
 import { FieldProps, getIn } from "formik";
 import React from "react";
 
 export type FormikDatePickerDateProps = React.PropsWithChildren<
-  DatePickerProps<Date> &
+  DatePickerProps<Date, Date> &
     FieldProps<Date | null, any> &
-    Pick<TextFieldProps, "disabled" | "variant" | "fullWidth">
+    Pick<
+      TextFieldProps,
+      "InputLabelProps" | "disabled" | "variant" | "fullWidth"
+    > & {
+      "data-cy": string;
+    }
 >;
 
 const propsAreEqual = (
@@ -28,44 +33,78 @@ const propsAreEqual = (
 export const FormikDatePickerDate = React.memo(
   ({
     disabled,
+    InputLabelProps,
+    "data-cy": dataCy,
     variant = "filled",
     fullWidth,
-    form: { setFieldValue, setFieldError, errors, touched, isSubmitting },
+    form: {
+      setFieldValue,
+      setFieldError,
+      errors,
+      touched,
+      isSubmitting,
+      setFieldTouched,
+    },
     field: { name, value },
+    autoComplete,
     ...props
-  }: FormikDatePickerDateProps) => {
+  }: FormikDatePickerDateProps & { autoComplete?: string }) => {
     const errorText = getIn(errors, name);
     const touchedVal = getIn(touched, name);
-    const hasError = touchedVal && errorText !== undefined;
-
+    const hasError = touchedVal != null && errorText !== undefined;
     return (
-      <DatePicker<Date>
+      <DatePicker
         {...props}
         mask="__.__.____"
         inputFormat="dd.MM.yyyy"
         disabled={disabled || isSubmitting}
-        onError={(error) => {
-          if (error && errorText !== `${error}`) {
-            setFieldError(name, `${error}`);
-          }
-        }}
-        onChange={(value) => {
-          if (value == null) {
-            setFieldValue(name, null);
-          } else if (isValid(value)) {
-            setFieldValue(name, value);
+        ignoreInvalidInputs
+        onChange={(date, keyboardInputValue) => {
+          // See https://github.com/jaredpalmer/formik/issues/706
+          if (keyboardInputValue != null) {
+            if (
+              /^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$/.test(
+                keyboardInputValue
+              )
+            ) {
+              const newFieldValue = parse(
+                keyboardInputValue,
+                "dd.MM.yyyy",
+                new Date()
+              );
+              setFieldValue(name, newFieldValue, true);
+            } else {
+              setFieldValue(name, Date.parse("foo"), false);
+              setFieldError(name, "Ungültiges Datum (TT.MM.JJJJ)");
+            }
+          } else if (date) {
+            setFieldValue(name, date, true);
+          } else if (keyboardInputValue == null && date == null) {
+            setFieldValue(name, null, false);
           }
         }}
         value={value}
         renderInput={(params) => (
           <TextField
+            InputLabelProps={InputLabelProps}
+            inputProps={{
+              placeholder: "TT.MM.JJJJ",
+              ...params.inputProps,
+            }}
             name={name}
+            {...params}
             variant={variant}
             fullWidth={fullWidth}
+            autoComplete={autoComplete}
             disabled={disabled || isSubmitting}
-            {...params}
             helperText={hasError ? errorText : ""}
             error={hasError}
+            data-cy={dataCy}
+            onBlur={() => {
+              // See https://github.com/jaredpalmer/formik/issues/706
+              setFieldTouched(name, true, false);
+              setFieldError(name, errorText);
+            }}
           />
         )}
       />

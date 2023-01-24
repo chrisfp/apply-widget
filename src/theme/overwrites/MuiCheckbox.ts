@@ -6,9 +6,9 @@ export const MuiCheckbox = (theme: Theme) => {
       root: {
         alignSelf: "flex-start",
         postion: "relative",
-        top: -10
-      }
-    }
+        top: -10,
+      },
+    },
   };
   return overwrite;
 };

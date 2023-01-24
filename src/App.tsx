@@ -1,7 +1,7 @@
-import { LocalizationProvider } from "@mui/lab";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { Box, StyledEngineProvider, Theme, ThemeProvider } from "@mui/material";
-import de from "date-fns/locale/de";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { de } from "date-fns/locale";
 import React from "react";
 
 import { ApplyForm } from "./organisms/ApplyForm";
@@ -22,7 +22,7 @@ export function App({ companyId, businessUnits, redirect }: AppProps) {
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <LocalizationProvider dateAdapter={AdapterDateFns} locale={de}>
+        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={de}>
           <Box p={2} style={{ backgroundColor: "#fff" }}>
             <ApplyForm
               companyId={companyId}

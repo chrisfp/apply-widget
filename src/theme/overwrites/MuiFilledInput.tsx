@@ -1,50 +1,55 @@
-import { Components, Theme } from "@mui/material";
+import { alpha, Components, Theme } from "@mui/material";
 
 export const MuiFilledInput = (theme: Theme) => {
   const overwrite: Components["MuiFilledInput"] = {
     styleOverrides: {
       root: {
-        borderRadius: theme.spacing(1, 1, 1, 1),
-        borderWidth: 3,
+        borderRadius: theme.shape.borderRadius,
+        borderWidth: 4,
         borderColor: "transparent",
         borderStyle: "solid",
-        borderTopLeftRadius: theme.spacing(1),
-        borderTopRightRadius: theme.spacing(1),
+        borderTopLeftRadius: theme.shape.borderRadius,
+        borderTopRightRadius: theme.shape.borderRadius,
         transition: theme.transitions.create(["border-color"]),
-        "& .Mui-error": {
-          borderColor: theme.palette.error.main,
+        "&.Mui-error": {
+          borderColor: alpha(theme.palette.error.main, 0.3)
         },
-        "& .Mui-focused": {
-          borderColor: theme.palette.action.hover,
+        "&.Mui-focused": {
+          borderColor: theme.palette.action.hover
         },
         "&:hover:not(.Mui-disabled)::before": {
-          borderBottom: "none",
+          borderBottom: "none"
         },
         "&.Mui-disabled::before": {
-          borderBottomStyle: "none !important",
-        },
+          borderBottomStyle: "none !important"
+        }
       },
       input: {
-        padding: "25px 12px 10px",
+        padding: "25px 12px 10px"
       },
       underline: {
         "& .Mui-disabled::before": {
-          borderBottomStyle: "none",
+          borderBottomStyle: "none"
         },
         "&::before": {
-          borderBottom: "none",
+          borderBottom: "none"
         },
         "&::after": {
-          borderBottom: "none",
+          borderBottom: "none"
         },
         "&:hover::before": {
-          borderBottom: "none",
+          borderBottom: "none"
         },
         "&:hover::after": {
-          borderBottom: "none",
-        },
+          borderBottom: "none"
+        }
       },
-    },
+      multiline: {
+        display: "flex",
+        flexDirection: "column",
+        padding: "10px 12px 10px"
+      }
+    }
   };
   return overwrite;
 };

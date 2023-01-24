@@ -111,8 +111,9 @@ export const validationSchema = (
       .required("Pflichtfeld"),
     dateOfBirth: yup
       .date()
-      .min(new Date(1900, 0, 1), "Format: TT.MM.YYYY")
       .nullable()
+      .min(new Date(1900, 0, 1), "Format: TT.MM.YYYY")
+      .max(addYears(new Date(), -17), "Mindestalter: 17 Jahre")
       .required("Pflichtfeld")
   });
 

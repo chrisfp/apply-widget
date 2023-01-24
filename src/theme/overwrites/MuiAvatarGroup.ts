@@ -6,11 +6,11 @@ export const MuiAvatarGroup = (theme: Theme) => ({
       justifyContent: "flex-end",
       paddingLeft: theme.spacing(1),
       "& .MuiAvatar-root": {
-        boxSizing: "border-box"
+        boxSizing: "border-box",
       },
       "& .MuiAvatar-root:last-child": {
-        marginLeft: theme.spacing(-1)
-      }
-    }
-  }
+        marginLeft: theme.spacing(-1),
+      },
+    },
+  },
 });

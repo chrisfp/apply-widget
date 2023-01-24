@@ -7,7 +7,7 @@ import * as React from "react";
 
 export interface FormattedTextFieldProps
   extends FieldProps,
-    Omit<MuiTextFieldProps, "name" | "value" | "error"> {
+    Omit<MuiTextFieldProps, "name" | "error"> {
   onFormat?: (value: string) => string;
   onFormatComplex?: (event: React.ChangeEvent<HTMLInputElement>) => string;
 }
@@ -45,8 +45,11 @@ export function fieldToTextField({
     },
     onBlur: function(e) {
       setFieldValue(field.name, field.value?.trim() || "");
-      if (onBlur) {
+      if (fieldOnBlur) {
         fieldOnBlur(e ?? field.name);
+      }
+      if (onBlur) {
+        onBlur(e);
       }
     },
     ...field,
@@ -91,8 +94,9 @@ export function fieldToTextBase({
 
 export function FormattedTextField({
   children,
+  debounce,
   ...props
-}: FormattedTextFieldProps) {
+}: FormattedTextFieldProps & { debounce?: number }) {
   React.useEffect(() => {
     if (props.onFormat && props.field.value) {
       const formatted = props.onFormat(props.field.value);
@@ -100,7 +104,7 @@ export function FormattedTextField({
         props.form.setFieldValue(props.field.name, formatted);
       }
     }
-    if (props.onFormatComplex && props.field.value && props.field.value) {
+    if (props.onFormatComplex && props.field.value) {
       const formatted = props.onFormatComplex({
         selectionEnd: 0,
         target: { value: props.field.value }

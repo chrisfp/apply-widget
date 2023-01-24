@@ -1,17 +1,34 @@
 import { createTheme, ThemeOptions } from "@mui/material";
 
 import { overwrites } from "./overwrites/overwrites";
-import { palette } from "./palette";
+import { paletteDark, paletteLight } from "./palette";
 import { typography } from "./typography";
 
+const shape = {
+  borderRadius: 8
+};
 const baseTheme: ThemeOptions = {
-  palette,
-  typography,
+  shape,
+  palette: paletteLight,
+  typography
+};
+const baseDarkTheme: ThemeOptions = {
+  shape,
+  palette: paletteDark,
+  typography
 };
 
+const themeWithDarkColors = createTheme(baseDarkTheme);
 const themeWithColors = createTheme(baseTheme);
 export const theme = createTheme({
-  palette,
+  shape,
+  palette: paletteLight,
   typography,
-  components: overwrites(themeWithColors),
+  components: overwrites(themeWithColors)
+});
+export const darkTheme = createTheme({
+  shape,
+  palette: paletteDark,
+  typography,
+  components: overwrites(themeWithDarkColors)
 });

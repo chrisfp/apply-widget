@@ -3,6 +3,7 @@ import { Components, Theme } from "@mui/material";
 import { MuiAlert } from "./MuiAlert";
 import { MuiAvatar } from "./MuiAvatar";
 import { MuiAvatarGroup } from "./MuiAvatarGroup";
+import { MuiBadge } from "./MuiBadge";
 import { MuiButton } from "./MuiButton";
 import { MuiCheckbox } from "./MuiCheckbox";
 import { MuiFilledInput } from "./MuiFilledInput";
@@ -17,18 +18,19 @@ import { MuiTypography } from "./MuiTypography";
 
 export const overwrites = (theme: Theme) =>
   ({
-    MuiButton: MuiButton(theme),
-    MuiFilledInput: MuiFilledInput(theme),
-    MuiInputLabel: MuiInputLabel(theme),
-    MuiLink: MuiLink(theme),
-    MuiTabs: MuiTabs(theme),
-    MuiCheckbox: MuiCheckbox(theme),
-    MuiFormControlLabel: MuiFormControlLabel(theme),
-    MuiTab: MuiTab(theme),
-    MuiTableCell: MuiTableCell(theme),
-    MuiPaper: MuiPaper(theme),
-    MuiTypography: MuiTypography(theme),
     MuiAlert: MuiAlert(theme),
     MuiAvatar: MuiAvatar(theme),
-    MuiAvatarGroup: MuiAvatarGroup(theme)
+    MuiAvatarGroup: MuiAvatarGroup(theme),
+    MuiBadge: MuiBadge(theme),
+    MuiButton: MuiButton(theme),
+    MuiCheckbox: MuiCheckbox(theme),
+    MuiFilledInput: MuiFilledInput(theme),
+    MuiFormControlLabel: MuiFormControlLabel(theme),
+    MuiInputLabel: MuiInputLabel(theme),
+    MuiLink: MuiLink(theme),
+    MuiPaper: MuiPaper(theme),
+    MuiTab: MuiTab(theme),
+    MuiTableCell: MuiTableCell(theme),
+    MuiTabs: MuiTabs(theme),
+    MuiTypography: MuiTypography(theme)
   } as Components);
