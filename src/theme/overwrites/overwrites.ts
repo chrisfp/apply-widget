@@ -8,6 +8,7 @@ import { MuiButton } from "./MuiButton";
 import { MuiCheckbox } from "./MuiCheckbox";
 import { MuiFilledInput } from "./MuiFilledInput";
 import { MuiFormControlLabel } from "./MuiFormControlLabel";
+import { MuiFormHelperText } from "./MuiFormHelperText";
 import { MuiInputLabel } from "./MuiInputLabel";
 import { MuiLink } from "./MuiLink";
 import { MuiPaper } from "./MuiPaper";
@@ -26,6 +27,7 @@ export const overwrites = (theme: Theme) =>
     MuiCheckbox: MuiCheckbox(theme),
     MuiFilledInput: MuiFilledInput(theme),
     MuiFormControlLabel: MuiFormControlLabel(theme),
+    MuiFormHelperText: MuiFormHelperText(theme),
     MuiInputLabel: MuiInputLabel(theme),
     MuiLink: MuiLink(theme),
     MuiPaper: MuiPaper(theme),
