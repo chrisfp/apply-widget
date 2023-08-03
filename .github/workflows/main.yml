@@ -98,3 +98,6 @@ jobs:
           release_name: ${{ steps.previoustag.outputs.tag }}
           draft: false
           prerelease: false
+
+      - name: Purge Cache
+        run: curl https://purge.jsdelivr.net/gh/chrisfp/apply-widget/dist/apply-widget.min.js
