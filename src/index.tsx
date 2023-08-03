@@ -47,7 +47,7 @@ export const firebaseConfig = {
 
 const httpFunctionsBaseUrl = process.env.REACT_APP_USE_EMULATOR
   ? `http://127.0.0.1:5005/${process.env.REACT_APP_GCP_PROJECT}/${process.env.REACT_APP_REGION}`
-  : `https://${process.env.REACT_APP_REGION}-${process.env.REACT_APP_GCP_PROJECT}.cloudfunctions.net`;
+  : `https://signatureapp.de`;
 
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
