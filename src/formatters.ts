@@ -17,6 +17,29 @@ export const formatIban = (str: string) => {
     .trim();
 };
 
+export const formatName = (sRaw: string) => {
+  const words = sRaw.split(" ");
+  return words
+    .map((word, index) => {
+      const innerWords = word.split("-");
+      return innerWords
+        .map(word => word.replace(/[^(A-Za-zŽžÀ-ÿ)]/g, ""))
+        .map(innerWord =>
+          index === 0 || innerWord.length > 1
+            ? innerWord.charAt(0).toUpperCase() +
+              innerWord.slice(1).toLowerCase()
+            : innerWord
+        )
+        .filter(
+          (innerWord, index) =>
+            index === innerWords.length - 1 || innerWord.length > 0
+        )
+        .join("-");
+    })
+    .filter((word, index) => index === words.length - 1 || word.length > 0)
+    .join(" ");
+};
+
 export const formatIbanComplex = (
   event: React.ChangeEvent<HTMLInputElement>
 ) => {

@@ -23,8 +23,8 @@ import { FormControlCheckbox } from "../atoms/FormControlCheckbox";
 import { FormikDatePickerDate } from "../atoms/FormikDatePickerDate";
 import { SubmitButton } from "../atoms/SubmitButton";
 import {
-  formatCapitalizeFirst,
   formatLowerCaseTrim,
+  formatName,
   formatPhoneNumberCountryCode
 } from "../formatters";
 import { firebaseApply, firebaseCompanyDetailsFetch } from "../index";
@@ -342,7 +342,7 @@ export const ApplyForm = ({
                     name="lastName"
                     type="text"
                     label="Nachname"
-                    onFormat={formatCapitalizeFirst}
+                    onFormat={formatName}
                     component={FormattedTextField}
                   />
                 </Grid>
@@ -354,7 +354,7 @@ export const ApplyForm = ({
                     type="text"
                     label="Wohnort"
                     autoComplete="no"
-                    onFormat={formatCapitalizeFirst}
+                    onFormat={formatName}
                     component={FormattedTextField}
                   />
                 </Grid>
