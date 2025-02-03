@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { addYears } from "date-fns";
-import { Timestamp } from "firebase/firestore";
 import { Field, Form, Formik, FormikProps } from "formik";
 import { TextField } from "formik-mui";
 import parsePhoneNumberFromString from "libphonenumber-js";
@@ -23,6 +22,7 @@ import { FormControlCheckbox } from "../atoms/FormControlCheckbox";
 import { FormikDatePickerDate } from "../atoms/FormikDatePickerDate";
 import { SubmitButton } from "../atoms/SubmitButton";
 import {
+  formatCapitalizeFirst,
   formatLowerCaseTrim,
   formatName,
   formatPhoneNumberCountryCode
@@ -280,7 +280,7 @@ export const ApplyForm = ({
           try {
             await firebaseApply({
               ...values,
-              dateOfBirth: Timestamp.fromDate(values.dateOfBirth)
+              dateOfBirth: values.dateOfBirth?.toLocaleDateString("en-CA")
             });
             onSubmit?.(values);
             setApplied(true);

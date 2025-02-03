@@ -62,7 +62,7 @@ export const db = getFirestore(firebaseApp);
 
 export async function firebaseApply(
   applyData: Omit<ApplyFormValues, "dateOfBirth"> & {
-    dateOfBirth: Timestamp;
+    dateOfBirth: string;
   },
   user?: CaUser
 ) {
