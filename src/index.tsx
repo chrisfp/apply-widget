@@ -2,13 +2,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/styles";
 import { StyledEngineProvider, Theme } from "@mui/system";
 import { initializeApp } from "firebase/app";
-import {
-  collection,
-  doc,
-  getDoc,
-  getFirestore,
-  Timestamp
-} from "firebase/firestore";
+import { collection, doc, getDoc, getFirestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
 import React from "react";
 import ReactDOM from "react-dom";
