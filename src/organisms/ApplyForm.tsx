@@ -493,8 +493,8 @@ export const ApplyForm = ({
                         component={FormControlCheckbox}
                         label={
                           <Typography variant="body2" color="textSecondary">
-                            {company?.name} darf mich telefonisch und per Email
-                            kontaktieren.
+                            {company?.name} darf mich telefonisch, per Whatsapp
+                            und per Email kontaktieren.
                           </Typography>
                         }
                       />
