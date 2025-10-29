@@ -32,7 +32,7 @@ jobs:
           echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
 
       - name: Set up node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: "${{ steps.env.outputs.NVMRC }}"
 
@@ -41,7 +41,7 @@ jobs:
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -90,14 +90,13 @@ jobs:
           git checkout ${{ steps.previoustag.outputs.tag }}
 
       - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ steps.previoustag.outputs.tag }}
-          release_name: ${{ steps.previoustag.outputs.tag }}
+          tag: ${{ steps.previoustag.outputs.tag }}
+          name: ${{ steps.previoustag.outputs.tag }}
           draft: false
           prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Purge Cache
         run: curl https://purge.jsdelivr.net/gh/chrisfp/apply-widget/dist/apply-widget.min.js
