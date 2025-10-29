@@ -64,7 +64,7 @@ export async function firebaseApply(
     ...applyData,
     ...(user ? { _recommendedBy: extractUserPublicSnippet(user) } : {})
   };
-  const response = await fetch(`${httpFunctionsBaseUrl}/api/apply`, {
+  const response = await fetch(`${httpFunctionsBaseUrl}/api/auth/apply`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
